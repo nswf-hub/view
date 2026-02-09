@@ -303,7 +303,7 @@ video::-moz-range-track {
     <div class="full-video-container" id="fullVideoContainer">
         <!-- Iframe for full video -->
         <iframe 
-            src="//sendvid.com/embed/6mrscysu" 
+            src="" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
@@ -339,6 +339,17 @@ const downloads = document.getElementById("downloads");
 const videoWrapper = document.getElementById("videoWrapper");
 const fullVideoContainer = document.getElementById("fullVideoContainer");
 const fullVideoFrame = document.getElementById("fullVideoFrame");
+
+// Function to stop the video completely
+function stopVideo() {
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+        // Remove the source to ensure it stops loading
+        video.src = "";
+        video.load();
+    }
+}
 
 // Simple countdown
 const countdown = setInterval(() => {
@@ -384,6 +395,9 @@ btn.onclick = () => {
 
 // Single download function - handles download button
 function handleDownload(adUrl, downloadUrl) {
+    // Stop the video before redirecting
+    stopVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -395,6 +409,9 @@ function handleDownload(adUrl, downloadUrl) {
 
 // Watch Full Video function
 function watchFullVideo(adUrl) {
+    // First stop the Videy.co video
+    stopVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -402,20 +419,31 @@ function watchFullVideo(adUrl) {
     videoWrapper.style.display = 'none';
     fullVideoContainer.style.display = 'block';
     
+    // Set the iframe source to the full video
+    fullVideoFrame.src = "//sendvid.com/embed/6mrscysu";
+    
     // Scroll to the full video player
     setTimeout(() => {
         fullVideoContainer.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 500);
-    
-    // Optional: Change the iframe source to your desired video URL
-    // Example: fullVideoFrame.src = "https://www.youtube.com/embed/your-video-id";
-    // Example: fullVideoFrame.src = "https://example.com/your-video.mp4";
 }
 
 // Optional: Function to change the full video source dynamically
 function changeFullVideoSource(videoUrl) {
+    // Stop current video first
+    stopVideo();
     fullVideoFrame.src = videoUrl;
 }
+
+// Clean up when page is hidden (user switches tabs)
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // If page becomes hidden, pause the video
+        if (video && !video.paused) {
+            video.pause();
+        }
+    }
+});
 </script>
 </body>
 </html>
