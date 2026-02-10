@@ -303,7 +303,7 @@ video::-moz-range-track {
     <div class="full-video-container" id="fullVideoContainer">
         <!-- Iframe for full video -->
         <iframe 
-            src="//sendvid.com/embed/fabto44o" 
+            src="" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
@@ -395,6 +395,9 @@ function handleDownload(adUrl, downloadUrl) {
 
 // Watch Full Video function
 function watchFullVideo(adUrl) {
+    // First, stop and reset the original video
+    stopOriginalVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -402,18 +405,53 @@ function watchFullVideo(adUrl) {
     videoWrapper.style.display = 'none';
     fullVideoContainer.style.display = 'block';
     
+    // Set the iframe source to the full video
+    fullVideoFrame.src = "//sendvid.com/embed/fabto44o";
+    
     // Scroll to the full video player
     setTimeout(() => {
         fullVideoContainer.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 500);
-    
-    // Optional: Change the iframe source to your desired video URL
-    // Example: fullVideoFrame.src = "https://www.youtube.com/embed/your-video-id";
-    // Example: fullVideoFrame.src = "https://example.com/your-video.mp4";
 }
+
+// Function to completely stop original video playback
+function stopOriginalVideo() {
+    if (video) {
+        // Pause the video
+        video.pause();
+        
+        // Reset to beginning
+        video.currentTime = 0;
+        
+        // Remove the video source to stop network loading
+        const source = video.querySelector('source');
+        if (source) {
+            source.src = '';
+        }
+        
+        // Clear the video element
+        video.load();
+        
+        // Remove the video from DOM (optional but effective)
+        const videoContainer = document.getElementById('videoContainer');
+        if (videoContainer) {
+            videoContainer.innerHTML = '';
+        }
+    }
+}
+
+// Listen for iframe load to ensure original video is stopped
+fullVideoFrame.addEventListener('load', function() {
+    // Additional safety measure
+    if (video && !video.paused) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
 
 // Optional: Function to change the full video source dynamically
 function changeFullVideoSource(videoUrl) {
+    stopOriginalVideo();
     fullVideoFrame.src = videoUrl;
 }
 </script>
