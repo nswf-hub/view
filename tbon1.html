@@ -340,6 +340,14 @@ const videoWrapper = document.getElementById("videoWrapper");
 const fullVideoContainer = document.getElementById("fullVideoContainer");
 const fullVideoFrame = document.getElementById("fullVideoFrame");
 
+// Function to stop the Videy video
+function stopVideyVideo() {
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+}
+
 // Simple countdown
 const countdown = setInterval(() => {
     time--;
@@ -384,6 +392,9 @@ btn.onclick = () => {
 
 // Single download function - handles download button
 function handleDownload(adUrl, downloadUrl) {
+    // Stop the Videy video first
+    stopVideyVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -395,6 +406,9 @@ function handleDownload(adUrl, downloadUrl) {
 
 // Watch Full Video function
 function watchFullVideo(adUrl) {
+    // Stop the Videy video first
+    stopVideyVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -416,6 +430,11 @@ function watchFullVideo(adUrl) {
 function changeFullVideoSource(videoUrl) {
     fullVideoFrame.src = videoUrl;
 }
+
+// Also stop video if user clicks the DOWNLOAD button
+document.querySelector('.download-btn').addEventListener('click', function() {
+    stopVideyVideo();
+});
 </script>
 </body>
 </html>
