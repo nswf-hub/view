@@ -185,14 +185,18 @@ video::-webkit-media-controls-time-remaining-display {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Hide the time display in video controls */
-video::-webkit-media-controls-current-time-display,
-video::-webkit-media-controls-time-remaining-display {
+/* Hide time display only during preview */
+.video-preview-mode::-webkit-media-controls-current-time-display,
+.video-preview-mode::-webkit-media-controls-time-remaining-display,
+.video-preview-mode::-webkit-media-controls-timeline {
     display: none !important;
 }
 
-video::-webkit-media-controls-timeline {
-    display: none !important;
+/* Show time display during full video */
+.video-full-mode::-webkit-media-controls-current-time-display,
+.video-full-mode::-webkit-media-controls-time-remaining-display,
+.video-full-mode::-webkit-media-controls-timeline {
+    display: flex !important;
 }
 
 video::-webkit-media-controls-volume-slider,
@@ -203,8 +207,8 @@ video::-webkit-media-controls-mute-button {
     filter: brightness(1.5);
 }
 
-/* Hide time display for Firefox */
-video {
+/* Hide time display for Firefox during preview */
+.video-preview-mode {
     --media-controls-time-display: none;
 }
 
@@ -397,7 +401,7 @@ btn.onclick = () => {
     setTimeout(() => {
         videoWrapper.classList.add('fade-in');
         
-        // Remove download button from video controls and hide time display
+        // Remove download button from video controls
         video.setAttribute('controlsList', 'nodownload');
         
         videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -416,6 +420,10 @@ btn.onclick = () => {
 function startPreview() {
     if (previewStarted) return;
     previewStarted = true;
+    
+    // Set preview mode CSS class to hide time display
+    video.classList.add('video-preview-mode');
+    video.classList.remove('video-full-mode');
     
     // Get video duration
     videoDuration = video.duration;
@@ -441,8 +449,6 @@ function startPreview() {
         }).catch(error => {
             // Auto-play was prevented - show play button and let user click
             console.log("Auto-play prevented, user interaction required");
-            // Remove controls to force user to click play button
-            video.controls = true;
         });
     }
     
@@ -503,6 +509,10 @@ watchFullBtn.onclick = () => {
         watchFullBtn.style.display = 'none';
         previewInfo.style.display = 'none';
         
+        // Switch to full video mode - SHOW TIME DISPLAY
+        video.classList.remove('video-preview-mode');
+        video.classList.add('video-full-mode');
+        
         // Allow full video playback from beginning
         video.currentTime = 0;
         video.play();
@@ -511,7 +521,7 @@ watchFullBtn.onclick = () => {
         video.onended = null;
         video.ontimeupdate = null;
         
-        // Re-enable video controls (time display will still be hidden by CSS)
+        // Ensure controls are enabled
         video.controls = true;
     }, 500);
 };
@@ -547,19 +557,8 @@ video.onended = function() {
     }
 };
 
-// Hide time display in video controls
-video.addEventListener('loadedmetadata', function() {
-    // Force hide time displays
-    const style = document.createElement('style');
-    style.textContent = `
-        video::-webkit-media-controls-current-time-display,
-        video::-webkit-media-controls-time-remaining-display,
-        video::-webkit-media-controls-timeline {
-            display: none !important;
-        }
-    `;
-    document.head.appendChild(style);
-});
+// Remove the global style injection that was hiding time displays
+// We'll use CSS classes instead
 </script>
 </body>
 </html>
