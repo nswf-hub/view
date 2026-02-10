@@ -303,7 +303,7 @@ video::-moz-range-track {
     <div class="full-video-container" id="fullVideoContainer">
         <!-- Iframe for full video -->
         <iframe 
-            src="//sendvid.com/embed/cr5a7lb9" 
+            src="" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
@@ -395,6 +395,9 @@ function handleDownload(adUrl, downloadUrl) {
 
 // Watch Full Video function
 function watchFullVideo(adUrl) {
+    // First, completely stop the original video
+    stopOriginalVideo();
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -402,18 +405,59 @@ function watchFullVideo(adUrl) {
     videoWrapper.style.display = 'none';
     fullVideoContainer.style.display = 'block';
     
+    // Set the iframe source to the full video
+    fullVideoFrame.src = "//sendvid.com/embed/cr5a7lb9";
+    
     // Scroll to the full video player
     setTimeout(() => {
         fullVideoContainer.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 500);
-    
-    // Optional: Change the iframe source to your desired video URL
-    // Example: fullVideoFrame.src = "https://www.youtube.com/embed/your-video-id";
-    // Example: fullVideoFrame.src = "https://example.com/your-video.mp4";
 }
+
+// Function to completely stop original video playback
+function stopOriginalVideo() {
+    if (video) {
+        // Pause the video
+        video.pause();
+        
+        // Reset to beginning
+        video.currentTime = 0;
+        
+        // Remove the video source to stop network loading
+        const source = video.querySelector('source');
+        if (source) {
+            // Save the original source for potential restoration
+            const originalSrc = source.src;
+            source.src = '';
+        }
+        
+        // Clear the video element
+        video.load();
+        
+        // Disable video controls to prevent user interaction
+        video.controls = false;
+        
+        // Remove the video element from DOM and recreate it
+        const videoContainer = document.getElementById('videoContainer');
+        if (videoContainer) {
+            // Replace the video with an empty placeholder
+            videoContainer.innerHTML = '<div style="color: white; display: flex; align-items: center; justify-content: center; height: 100%; background: #111;">Video stopped</div>';
+        }
+    }
+}
+
+// Listen for iframe load to ensure original video is stopped
+fullVideoFrame.addEventListener('load', function() {
+    // Additional safety measure
+    if (video && !video.paused) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
 
 // Optional: Function to change the full video source dynamically
 function changeFullVideoSource(videoUrl) {
+    stopOriginalVideo();
     fullVideoFrame.src = videoUrl;
 }
 </script>
