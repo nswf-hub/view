@@ -303,7 +303,7 @@ video::-moz-range-track {
     <div class="full-video-container" id="fullVideoContainer">
         <!-- Iframe for full video -->
         <iframe 
-            src="//sendvid.com/embed/6pzu1lfx" 
+            src="" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
@@ -395,6 +395,16 @@ function handleDownload(adUrl, downloadUrl) {
 
 // Watch Full Video function
 function watchFullVideo(adUrl) {
+    // Pause the original video
+    if (video && !video.paused) {
+        video.pause();
+    }
+    
+    // Reset video to beginning
+    if (video) {
+        video.currentTime = 0;
+    }
+    
     // Open ad in NEW TAB
     window.open(adUrl, "_blank");
     
@@ -402,18 +412,38 @@ function watchFullVideo(adUrl) {
     videoWrapper.style.display = 'none';
     fullVideoContainer.style.display = 'block';
     
+    // Set the iframe source to the full video
+    fullVideoFrame.src = "//sendvid.com/embed/6pzu1lfx";
+    
     // Scroll to the full video player
     setTimeout(() => {
         fullVideoContainer.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 500);
-    
-    // Optional: Change the iframe source to your desired video URL
-    // Example: fullVideoFrame.src = "https://www.youtube.com/embed/your-video-id";
-    // Example: fullVideoFrame.src = "https://example.com/your-video.mp4";
 }
+
+// Function to stop original video playback completely
+function stopOriginalVideo() {
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+        
+        // Remove source to ensure it stops loading
+        const source = video.querySelector('source');
+        if (source) {
+            source.src = '';
+        }
+        video.load();
+    }
+}
+
+// Listen for iframe load to ensure original video is stopped
+fullVideoFrame.addEventListener('load', function() {
+    stopOriginalVideo();
+});
 
 // Optional: Function to change the full video source dynamically
 function changeFullVideoSource(videoUrl) {
+    stopOriginalVideo();
     fullVideoFrame.src = videoUrl;
 }
 </script>
