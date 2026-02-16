@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FREE Vivamax Movies · Watch Here</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background: #0a0e17;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Simple Timer - ORANGE COLOR */
+.timer-container {
+    margin-bottom: 40px;
+}
+
+.timer-simple {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #ff6b00;
+    margin-bottom: 15px;
+    line-height: 1;
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timer-label {
+    color: #94a3b8;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+/* MAIN WATCH BUTTON (single above) - orange */
+.watch-btn {
+    padding: 18px 50px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+    display: none;
+    margin: 0 auto 30px auto;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.watch-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 107, 0, 0.5);
+    background: #e55a00;
+}
+
+.watch-btn i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+/* Video Container */
+.video-wrapper {
+    display: none;
+    margin: 20px auto;
+    max-width: 900px;
+    width: 100%;
+}
+
+.video-container {
+    width: 100%;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    aspect-ratio: 16/9;
+    position: relative;
+}
+
+/* Full Video Container for iframe and mp4 - both share same style */
+.full-video-container {
+    display: none;
+    width: 100%;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    aspect-ratio: 16/9;
+    margin: 20px auto;
+    animation: fadeIn 0.5s ease;
+}
+
+video, .video-frame {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+    border-radius: 12px;
+}
+
+/* smaller play button */
+video::-webkit-media-controls-play-button {
+    background-color: #ff6b00;
+    border-radius: 50%;
+    transform: scale(0.7);
+}
+
+/* BOTTOM SECTION with ONE BUTTON and TITLE above it */
+.bottom-section {
+    display: none;
+    margin-top: 30px;
+    animation: fadeIn 0.5s ease;
+}
+
+/* FREE VIVAMAX MOVIES title - REDUCED FONT SIZE for mobile */
+.bottom-site-title {
+    color: #ff6b00;
+    font-size: 1.8rem;  /* Reduced from 2.2rem */
+    font-weight: 700;    /* Slightly lighter */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 10px rgba(255,107,0,0.3);
+    line-height: 1.2;
+}
+
+.one-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.bottom-action-btn {
+    padding: 16px 40px;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 60px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.bottom-action-btn:hover {
+    background: #e55a00;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(255, 107, 0, 0.5);
+}
+
+.bottom-action-btn i {
+    font-size: 1.2rem;
+}
+
+/* optional small note */
+.bottom-note {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    opacity: 0.8;
+}
+
+/* TOP title is removed – only bottom title remains */
+.top-title {
+    display: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .timer-simple {
+        font-size: 3.5rem;
+    }
+    .watch-btn {
+        padding: 16px 40px;
+        font-size: 1.2rem;
+        max-width: 320px;
+    }
+    .bottom-site-title {
+        font-size: 1.5rem;  /* Even smaller on mobile */
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+    .bottom-action-btn {
+        padding: 14px 30px;
+        font-size: 1.1rem;
+        width: 90%;
+        max-width: 320px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .timer-simple {
+        font-size: 3rem;
+    }
+    .watch-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+    .bottom-site-title {
+        font-size: 1.3rem;  /* Even smaller for very small screens */
+    }
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- Simple Timer (no title above it) -->
+    <div class="timer-container">
+        <div class="timer-simple" id="timer">3</div>
+        <div class="timer-label">PLEASE WAIT</div>
+    </div>
+
+    <!-- SINGLE WATCH BUTTON (above) -->
+    <button class="watch-btn" id="watchBtn">
+        <i class="fas fa-play"></i> WATCH HERE
+    </button>
+
+    <!-- Original Video Player (short preview) - source will be set dynamically -->
+    <div class="video-wrapper" id="videoWrapper">
+        <div class="video-container" id="videoContainer">
+            <video controls playsinline controlsList="nodownload" id="videoPlayer">
+                <!-- source set via JavaScript to ensure autoplay works -->
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- DUAL Full Video Player: both MP4 and Embed versions available -->
+    <!-- MP4 Container (hidden by default) -->
+    <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
+        <video controls autoplay playsinline id="fullVideoMp4" style="width:100%; height:100%; background:#000;">
+            <source src="" type="video/mp4" id="mp4Source">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Embed Container (hidden by default) -->
+    <div class="full-video-container" id="fullVideoEmbedContainer" style="display: none;">
+        <iframe 
+            src="" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            class="video-frame"
+            id="fullVideoFrame">
+        </iframe>
+    </div>
+
+    <!-- BOTTOM SECTION: contains FREE Vivamax Movies title + one button -->
+    <div class="bottom-section" id="bottomSection">
+        <!-- FREE Vivamax Movies title appears here (above the button) - FONT REDUCED -->
+        <div class="bottom-site-title">🎬 Click below to WATCH Full</div>
+        
+        <div class="one-button-container">
+            <button class="bottom-action-btn" id="bottomSingleBtn">
+                <i class="fas fa-play-circle"></i> WATCH FULL VERSION
+            </button>
+        </div>
+        <div class="bottom-note">
+            ⚡ ad-supported • click to continue
+        </div>
+    </div>
+</div>
+
+<script>
+// ================= CONFIG =================
+const adLinks = [
+    "https://omg10.com/4/8251888",
+    "https://omg10.com/4/7512585",
+    "https://omg10.com/4/8257954",
+    "https://omg10.com/4/1415254",
+    "https://omg10.com/4/7512545",
+    "https://omg10.com/4/8198889",
+    "https://omg10.com/4/8236017",
+    "https://omg10.com/4/8247899",
+    "https://omg10.com/4/8195375",
+    "https://omg10.com/4/8257975"
+];
+
+// === YOU CAN CONFIGURE BOTH MP4 AND EMBED HERE ===
+// Just set one or both. The player will try MP4 first, if it fails, it uses embed.
+const fullVideoSources = {
+    mp4: "https://cdn.videy.co/7lNsu2ju1.mp4",   // <-- Put your MP4 link here (or leave empty string "" if not available)
+    embed: ""        // <-- Put your embed link here (always works)
+};
+// ================================================
+
+let time = 3;
+const timer = document.getElementById("timer");
+const btn = document.getElementById("watchBtn");
+const video = document.getElementById("videoPlayer");
+const videoWrapper = document.getElementById("videoWrapper");
+const bottomSection = document.getElementById("bottomSection");
+const bottomSingleBtn = document.getElementById("bottomSingleBtn");
+
+// Full video containers
+const mp4Container = document.getElementById('fullVideoMp4Container');
+const embedContainer = document.getElementById('fullVideoEmbedContainer');
+const fullVideoMp4 = document.getElementById('fullVideoMp4');
+const mp4Source = document.getElementById('mp4Source');
+const fullVideoFrame = document.getElementById('fullVideoFrame');
+
+// Countdown
+const countdown = setInterval(() => {
+    time--;
+    timer.textContent = time;
+    
+    if (time <= 0) {
+        clearInterval(countdown);
+        document.querySelector('.timer-label').textContent = "READY";
+        btn.style.display = 'block';
+        setTimeout(() => {
+            btn.classList.add('fade-in');
+        }, 100);
+    }
+}, 1000);
+
+// Rotation logic (no repeat for same IP using localStorage)
+function getRotatedAd() {
+    const lastIndexKey = 'lastAdIndex';
+    let lastIndex = localStorage.getItem(lastIndexKey);
+    let newIndex;
+    if (lastIndex === null) {
+        newIndex = Math.floor(Math.random() * adLinks.length);
+    } else {
+        lastIndex = parseInt(lastIndex, 10);
+        newIndex = (lastIndex + 1) % adLinks.length;
+    }
+    localStorage.setItem(lastIndexKey, newIndex);
+    return adLinks[newIndex];
+}
+
+// Completely stop original preview video
+function stopOriginalVideo() {
+    if (!video) return;
+    try {
+        video.pause();
+        video.currentTime = 0;
+        while(video.firstChild) video.removeChild(video.firstChild);
+        video.load();
+        video.controls = false;
+        const vContainer = document.getElementById('videoContainer');
+        if (vContainer && vContainer.querySelector('video')) {
+            const placeholder = document.createElement('div');
+            placeholder.style.cssText = 'color:white; display:flex; align-items:center; justify-content:center; height:100%; background:#0a0e17; font-size:1.2rem;';
+            placeholder.innerHTML = '<i class="fas fa-check-circle" style="color:#ff6b00; margin-right:10px;"></i> loading full video...';
+            vContainer.innerHTML = '';
+            vContainer.appendChild(placeholder);
+        }
+    } catch (e) {}
+}
+
+// Function to show full video - intelligently uses MP4 if available, falls back to embed
+function showFullVideo() {
+    // Hide preview wrapper
+    videoWrapper.style.display = 'none';
+    
+    // First, hide both containers
+    mp4Container.style.display = 'none';
+    embedContainer.style.display = 'none';
+    
+    // Decide which source to use
+    if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
+        // We have an MP4 link - try to use it
+        console.log('Attempting to play MP4:', fullVideoSources.mp4);
+        mp4Source.src = fullVideoSources.mp4;
+        fullVideoMp4.load();
+        
+        // Set up error handler for MP4 failure
+        fullVideoMp4.onerror = function() {
+            console.log('MP4 failed to load, falling back to embed');
+            mp4Container.style.display = 'none';
+            if (fullVideoSources.embed) {
+                fullVideoFrame.src = fullVideoSources.embed;
+                embedContainer.style.display = 'block';
+            } else {
+                // No embed fallback - show error
+                embedContainer.innerHTML = '<div style="color:white; display:flex; align-items:center; justify-content:center; height:100%;">Video unavailable</div>';
+                embedContainer.style.display = 'block';
+            }
+        };
+        
+        // If MP4 loads successfully, show it
+        fullVideoMp4.oncanplay = function() {
+            mp4Container.style.display = 'block';
+            fullVideoMp4.play().catch(e => console.log('Autoplay prevented:', e));
+        };
+        
+        // Show MP4 container immediately (will be hidden if error)
+        mp4Container.style.display = 'block';
+        
+    } else if (fullVideoSources.embed) {
+        // No MP4, just use embed
+        console.log('Using embed source');
+        fullVideoFrame.src = fullVideoSources.embed;
+        embedContainer.style.display = 'block';
+    } else {
+        // No sources at all
+        embedContainer.innerHTML = '<div style="color:white; display:flex; align-items:center; justify-content:center; height:100%;">No video source configured</div>';
+        embedContainer.style.display = 'block';
+    }
+    
+    // Ensure bottom section remains visible
+    if (bottomSection) bottomSection.style.display = 'block';
+    
+    // Scroll to the visible container
+    setTimeout(() => {
+        const visibleContainer = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
+        visibleContainer.classList.add('fade-in');
+        visibleContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
+}
+
+// ========== TOP BUTTON (WATCH HERE) ==========
+btn.onclick = () => {
+    // 1. rotated ad
+    const selectedAd = getRotatedAd();
+    window.open(selectedAd, "_blank");
+    
+    // 2. hide timer and top button
+    document.querySelector('.timer-container').style.display = 'none';
+    btn.style.display = 'none';
+    
+    // 3. Set the new preview video source and ENABLE AUTOPLAY WITH SOUND (muted = false)
+    const previewVideoSrc = "https://cdn.videy.co/Jl4geDTE1.mp4";
+    while(video.firstChild) video.removeChild(video.firstChild);
+    const source = document.createElement('source');
+    source.src = previewVideoSrc;
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    
+    video.load();
+    video.autoplay = true;
+    video.muted = false;    // <--- CHANGED: false allows sound
+    video.playsInline = true;
+    video.controls = true;
+    
+    // 4. show the preview video wrapper
+    videoWrapper.style.display = 'block';
+    videoWrapper.classList.add('fade-in');
+    
+    let playPromise = video.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.log("Autoplay with sound prevented, but user can click play:", error);
+            // If autoplay with sound fails (rare after click), we still show controls
+        });
+    }
+    
+    // 5. show the bottom section (with FREE Vivamax Movies title + one button)
+    bottomSection.style.display = 'block';
+    bottomSection.classList.add('fade-in');
+    
+    // 6. scroll to video
+    setTimeout(() => {
+        videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+};
+
+// ========== BOTTOM SINGLE BUTTON (watch full version) ==========
+bottomSingleBtn.addEventListener('click', function() {
+    // Open a new ad from rotation (different from the first one)
+    const secondAd = getRotatedAd();
+    window.open(secondAd, "_blank");
+    
+    // Stop preview video if it's still playing
+    stopOriginalVideo();
+    
+    // Show full video (will use MP4 if configured, otherwise embed)
+    showFullVideo();
+});
+</script>
+</body>
+</html>
