@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #0a0e17;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;  /* reduced for mobile */
+    }
+
+    .container {
+      max-width: 700px;   /* narrower */
+      width: 100%;
+      text-align: center;
+    }
+
+    /* timer smaller */
+    .timer-container {
+      margin-bottom: 20px;
+    }
+
+    .timer-simple {
+      font-size: 3.2rem;    /* reduced */
+      font-weight: 700;
+      color: #ff6b00;
+      margin-bottom: 6px;
+      line-height: 1;
+      min-height: 60px;
+    }
+
+    .timer-label {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* top watch button – compact */
+    .watch-btn {
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: #ff6b00;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      display: none;
+      margin: 0 auto 18px auto;
+      box-shadow: 0 6px 18px rgba(255, 107, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: 0.2s;
+    }
+
+    .watch-btn:hover {
+      background: #e55a00;
+      transform: translateY(-2px);
+    }
+
+    .watch-btn i {
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    /* video containers */
+    .video-wrapper {
+      display: none;
+      margin: 15px auto 10px;
+      width: 100%;
+    }
+
+    .video-container, .full-video-container {
+      width: 100%;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      aspect-ratio: 16/9;
+    }
+
+    .full-video-container {
+      display: none;
+      margin: 15px auto;
+    }
+
+    video, .video-frame {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
+
+    /* BOTTOM section – very compact */
+    .bottom-section {
+      display: none;
+      margin-top: 15px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    /* title size drastically reduced for mobile */
+    .bottom-site-title {
+      color: #ff6b00;
+      font-size: 1.3rem;      /* down from 1.8 → 1.3 */
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.2;
+      text-shadow: 0 1px 5px rgba(255,107,0,0.3);
+      padding: 0 5px;
+    }
+
+    .one-button-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .bottom-action-btn {
+      padding: 12px 28px;
+      background: #ff6b00;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.05rem;      /* slightly smaller */
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 5px 16px rgba(255, 107, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+      width: auto;
+      min-width: 220px;
+      justify-content: center;
+    }
+
+    .bottom-action-btn i {
+      font-size: 1.1rem;
+    }
+
+    .bottom-note {
+      color: #94a3b8;
+      font-size: 0.75rem;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    /* fade */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* super compact for tiny phones (under 400px) */
+    @media (max-width: 400px) {
+      .timer-simple {
+        font-size: 2.8rem;
+      }
+      .bottom-site-title {
+        font-size: 1.1rem;    /* even smaller if needed */
+        margin-bottom: 8px;
+      }
+      .bottom-action-btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        min-width: 180px;
+      }
+      .watch-btn {
+        padding: 10px 24px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+  <!-- TIMER (no extra text) -->
+  <div class="timer-container">
+    <div class="timer-simple" id="timer">3</div>
+    <div class="timer-label">PLEASE WAIT</div>
+  </div>
+
+  <!-- TOP WATCH BUTTON -->
+  <button class="watch-btn" id="watchBtn">
+    <i class="fas fa-play"></i> WATCH HERE
+  </button>
+
+  <!-- SHORT PREVIEW VIDEO (will show after click) -->
+  <div class="video-wrapper" id="videoWrapper">
+    <div class="video-container" id="videoContainer">
+      <video controls playsinline controlsList="nodownload" id="videoPlayer">
+        <!-- source set via JS -->
+      </video>
+    </div>
+  </div>
+
+  <!-- FULL VIDEO – MP4 VERSION (hidden initially) -->
+  <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
+    <video controls autoplay playsinline id="fullVideoMp4">
+      <source src="" type="video/mp4" id="mp4Source">
+    </video>
+  </div>
+
+  <!-- FULL VIDEO – EMBED VERSION (hidden initially) -->
+  <div class="full-video-container" id="fullVideoEmbedContainer" style="display: none;">
+    <iframe class="video-frame" id="fullVideoFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+
+  <!-- BOTTOM SECTION (title + big button) - TITLE NOW MUCH SMALLER -->
+  <div class="bottom-section" id="bottomSection">
+    <div class="bottom-site-title">🍿 WATCH FULL VIDEO</div>   <!-- shorter & smaller -->
+    <div class="one-button-container">
+      <button class="bottom-action-btn" id="bottomSingleBtn">
+        <i class="fas fa-play-circle"></i> CLICK HERE
+      </button>
+    </div>
+    <div class="bottom-note">⚡ ad-supported • tap to continue</div>
+  </div>
+</div>
+
+<script>
+  // ---------- CONFIG ----------
+  const adLinks = [
+    "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
+    "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
+    "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375",
+    "https://omg10.com/4/8257975"
+  ];
+
+  // --- SET YOUR FULL VIDEO SOURCES HERE ---
+  const fullVideoSources = {
+    mp4: "https://cdn.videy.co/YJQb0ab91.mp4",   // change or leave empty ''
+    embed: ""                                    // embed link if needed
+  };
+  // -----------------------------------------
+
+  let time = 3;
+  const timer = document.getElementById("timer");
+  const btn = document.getElementById("watchBtn");
+  const video = document.getElementById("videoPlayer");
+  const videoWrapper = document.getElementById("videoWrapper");
+  const bottomSection = document.getElementById("bottomSection");
+  const bottomSingleBtn = document.getElementById("bottomSingleBtn");
+
+  const mp4Container = document.getElementById('fullVideoMp4Container');
+  const embedContainer = document.getElementById('fullVideoEmbedContainer');
+  const fullVideoMp4 = document.getElementById('fullVideoMp4');
+  const mp4Source = document.getElementById('mp4Source');
+  const fullVideoFrame = document.getElementById('fullVideoFrame');
+
+  // Countdown
+  const countdown = setInterval(() => {
+    time--;
+    timer.textContent = time;
+    if (time <= 0) {
+      clearInterval(countdown);
+      document.querySelector('.timer-label').textContent = "READY";
+      btn.style.display = 'block';
+    }
+  }, 1000);
+
+  // Ad rotation (localStorage)
+  function getRotatedAd() {
+    const lastIndexKey = 'lastAdIndex';
+    let lastIndex = localStorage.getItem(lastIndexKey);
+    let newIndex;
+    if (lastIndex === null) {
+      newIndex = Math.floor(Math.random() * adLinks.length);
+    } else {
+      lastIndex = parseInt(lastIndex, 10);
+      newIndex = (lastIndex + 1) % adLinks.length;
+    }
+    localStorage.setItem(lastIndexKey, newIndex);
+    return adLinks[newIndex];
+  }
+
+  // Stop preview & clean
+  function stopOriginalVideo() {
+    if (!video) return;
+    try {
+      video.pause();
+      video.currentTime = 0;
+      while(video.firstChild) video.removeChild(video.firstChild);
+      video.load();
+      video.controls = false;
+      const vContainer = document.getElementById('videoContainer');
+      if (vContainer) {
+        vContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; background:#0a0e17; color:#ff6b00; font-size:0.9rem;"><i class="fas fa-spinner fa-pulse" style="margin-right:8px;"></i> loading full...</div>';
+      }
+    } catch (e) {}
+  }
+
+  // Show full video (intelligent fallback)
+  function showFullVideo() {
+    videoWrapper.style.display = 'none';
+    mp4Container.style.display = 'none';
+    embedContainer.style.display = 'none';
+
+    if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
+      mp4Source.src = fullVideoSources.mp4;
+      fullVideoMp4.load();
+
+      fullVideoMp4.onerror = function() {
+        mp4Container.style.display = 'none';
+        if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+          fullVideoFrame.src = fullVideoSources.embed;
+          embedContainer.style.display = 'block';
+        } else {
+          embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">⚠️ video unavailable</div>';
+          embedContainer.style.display = 'block';
+        }
+      };
+
+      fullVideoMp4.oncanplay = function() {
+        mp4Container.style.display = 'block';
+        fullVideoMp4.play().catch(e => console.log('play prevented'));
+      };
+
+      mp4Container.style.display = 'block'; // show optimistically
+    } 
+    else if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+      fullVideoFrame.src = fullVideoSources.embed;
+      embedContainer.style.display = 'block';
+    } 
+    else {
+      embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">no video source</div>';
+      embedContainer.style.display = 'block';
+    }
+
+    bottomSection.style.display = 'block';
+    setTimeout(() => {
+      const visible = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
+      visible.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
+  }
+
+  // ===== TOP BUTTON =====
+  btn.onclick = () => {
+    const ad = getRotatedAd();
+    window.open(ad, "_blank");
+
+    // hide timer & top button
+    document.querySelector('.timer-container').style.display = 'none';
+    btn.style.display = 'none';
+
+    // set preview video (with sound)
+    const previewSrc = "https://cdn.videy.co/NZ4pw8JG1.mp4";
+    while(video.firstChild) video.removeChild(video.firstChild);
+    const source = document.createElement('source');
+    source.src = previewSrc;
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    video.load();
+    video.autoplay = true;
+    video.muted = false;    // sound allowed
+    video.playsInline = true;
+    video.controls = true;
+
+    videoWrapper.style.display = 'block';
+    video.play().catch(() => {}); // ignore if fails, user can press play
+
+    // show bottom section
+    bottomSection.style.display = 'block';
+    setTimeout(() => {
+      videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  };
+
+  // ===== BOTTOM SINGLE BUTTON =====
+  bottomSingleBtn.addEventListener('click', function() {
+    const secondAd = getRotatedAd();
+    window.open(secondAd, "_blank");
+    stopOriginalVideo();
+    showFullVideo();
+  });
+
+</script>
+</body>
+</html>
