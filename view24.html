@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Player</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background: #0a0e17;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Simple Timer - ORANGE COLOR */
+.timer-container {
+    margin-bottom: 40px;
+}
+
+.timer-simple {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #ff6b00;
+    margin-bottom: 15px;
+    line-height: 1;
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timer-label {
+    color: #94a3b8;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+/* Watch Button - Orange color to match */
+.watch-btn {
+    padding: 18px 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+    display: none;
+    margin: 0 auto;
+}
+
+.watch-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 107, 0, 0.4);
+    background: #e55a00;
+}
+
+.watch-btn i {
+    margin-right: 10px;
+}
+
+/* Video Container */
+.video-wrapper {
+    display: none;
+    margin: 30px auto;
+    max-width: 900px;
+    width: 100%;
+}
+
+.video-container {
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    aspect-ratio: 16/9;
+    position: relative;
+}
+
+/* Full Video Container for iframe */
+.full-video-container {
+    display: none;
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    aspect-ratio: 16/9;
+    margin: 30px auto;
+    animation: fadeIn 0.5s ease;
+}
+
+video, .video-frame {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+    border-radius: 12px;
+}
+
+/* Style video controls for WebKit browsers (Chrome, Safari, Edge) */
+video::-webkit-media-controls-panel {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+/* REDUCED PLAY BUTTON SIZE */
+video::-webkit-media-controls-play-button {
+    background-color: #ff6b00;
+    border-radius: 50%;
+    transform: scale(0.7);
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-seek-back-button,
+video::-webkit-media-controls-seek-forward-button,
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-mute-button {
+    filter: brightness(1.5);
+}
+
+/* Style for Firefox */
+video::-moz-range-track {
+    background-color: #ff6b00;
+}
+
+/* Download Section - Orange color */
+.download-section {
+    display: none;
+    margin-top: 30px;
+    animation: fadeIn 0.5s ease;
+}
+
+.download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.download-btn, .full-video-btn {
+    padding: 16px 32px;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.download-btn:hover, .full-video-btn:hover {
+    background: #e55a00;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+}
+
+.download-btn i, .full-video-btn i {
+    font-size: 1.2rem;
+}
+
+.download-note {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 3px solid #ff6b00;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .timer-simple {
+        font-size: 3.5rem;
+        min-height: 60px;
+    }
+    
+    .watch-btn {
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .download-btn, .full-video-btn {
+        width: 100%;
+        max-width: 300px;
+        min-width: auto;
+    }
+    
+    video {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    video::-webkit-media-controls-play-button {
+        background-color: #ff6b00;
+        transform: scale(0.6);
+    }
+}
+
+@media (max-width: 480px) {
+    .timer-simple {
+        font-size: 3rem;
+        min-height: 50px;
+    }
+    
+    .watch-btn {
+        padding: 14px 30px;
+        font-size: 1rem;
+        max-width: 250px;
+    }
+    
+    .download-btn, .full-video-btn {
+        padding: 14px 25px;
+        font-size: 0.95rem;
+    }
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- Simple Timer - ORANGE -->
+    <div class="timer-container">
+        <div class="timer-simple" id="timer">3</div>
+        <div class="timer-label">PLEASE WAIT</div>
+    </div>
+
+    <!-- Watch Button - ORANGE -->
+    <button class="watch-btn" id="watchBtn">
+        <i class="fas fa-play"></i> WATCH VIDEO
+    </button>
+
+    <!-- Original Video Player -->
+    <div class="video-wrapper" id="videoWrapper">
+        <div class="video-container" id="videoContainer">
+            <!-- Video WITHOUT autoplay - user must click play -->
+            <video controls playsinline controlsList="nodownload" id="videoPlayer">
+                <source src="https://cdn.videy.co/Hcj2PdJU1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- Full Video Player (hidden by default) -->
+    <div class="full-video-container" id="fullVideoContainer">
+        <!-- Iframe for full video -->
+        <iframe 
+            src="" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            class="video-frame"
+            id="fullVideoFrame">
+        </iframe>
+    </div>
+
+    <!-- Download Buttons - ORANGE -->
+    <div class="download-section" id="downloads">
+        <div class="download-buttons">
+            <!-- Download 1: Open ad in NEW TAB, then go to download link in MAIN TAB -->
+            <button class="download-btn" id="downloadBtn1">
+                <i class="fas fa-download"></i> DOWNLOAD 1
+            </button>
+            <!-- Watch Full Video: Open ad in NEW TAB, then show full video -->
+            <button class="full-video-btn" id="fullVideoBtn">
+                <i class="fas fa-film"></i> WATCH FULL VIDEO
+            </button>
+        </div>
+        <div class="download-note">
+            Click buttons above to watch MORE videos
+        </div>
+    </div>
+</div>
+
+<script>
+// Your 10 updated ad links for ALL buttons (using the same set for all)
+const AD_LINKS = [
+    "https://omg10.com/4/8251888",
+    "https://omg10.com/4/7512585", 
+    "https://omg10.com/4/8257954",
+    "https://omg10.com/4/1415254",
+    "https://omg10.com/4/7512545",
+    "https://omg10.com/4/8198889",
+    "https://omg10.com/4/8236017",
+    "https://omg10.com/4/8247899",
+    "https://omg10.com/4/8195375",
+    "https://omg10.com/4/8257975"
+];
+
+// Download link for DOWNLOAD 1 button
+const DOWNLOAD_LINK = "https://nswf-hub.github.io/download/view24";
+
+// Full video link
+const FULL_VIDEO_LINK = "//sendvid.com/embed/vbp1ilrd";
+
+// Function to get stored ad index for a specific key
+function getStoredAdIndex(key) {
+    const stored = localStorage.getItem(key);
+    if (stored) {
+        const data = JSON.parse(stored);
+        const now = Date.now();
+        
+        // Check if 24 hours have passed
+        if (now - data.timestamp < 24 * 60 * 60 * 1000) {
+            return data.index;
+        }
+    }
+    return null;
+}
+
+// Function to store ad index with timestamp
+function storeAdIndex(key, index) {
+    localStorage.setItem(key, JSON.stringify({
+        index: index,
+        timestamp: Date.now()
+    }));
+}
+
+// Function to get random ad link with 24-hour rotation
+function getRandomAdLink(storageKey) {
+    // Check if we have a stored index from last 24 hours
+    const storedIndex = getStoredAdIndex(storageKey);
+    
+    if (storedIndex !== null && storedIndex >= 0 && storedIndex < AD_LINKS.length) {
+        // Use the stored ad
+        return AD_LINKS[storedIndex];
+    } else {
+        // Get a truly random index
+        const randomIndex = Math.floor(Math.random() * AD_LINKS.length);
+        
+        // Store this index for 24 hours
+        storeAdIndex(storageKey, randomIndex);
+        
+        return AD_LINKS[randomIndex];
+    }
+}
+
+let time = 3;
+const timer = document.getElementById("timer");
+const btn = document.getElementById("watchBtn");
+const video = document.getElementById("videoPlayer");
+const downloads = document.getElementById("downloads");
+const videoWrapper = document.getElementById("videoWrapper");
+const fullVideoContainer = document.getElementById("fullVideoContainer");
+const fullVideoFrame = document.getElementById("fullVideoFrame");
+const downloadBtn1 = document.getElementById("downloadBtn1");
+const fullVideoBtn = document.getElementById("fullVideoBtn");
+
+// Simple countdown
+const countdown = setInterval(() => {
+    time--;
+    timer.textContent = time;
+    
+    if (time <= 0) {
+        clearInterval(countdown);
+        // Change label
+        document.querySelector('.timer-label').textContent = "READY";
+        // Show button with fade in
+        btn.style.display = 'block';
+        setTimeout(() => {
+            btn.classList.add('fade-in');
+        }, 100);
+    }
+}, 1000);
+
+// Watch button click
+btn.onclick = () => {
+    // Get random ad link for watch button (24-hour rotation)
+    const watchAdLink = getRandomAdLink('watch_ad_index');
+    
+    // Open ad in NEW TAB
+    window.open(watchAdLink, "_blank");
+    
+    // Hide timer and button
+    document.querySelector('.timer-container').style.display = 'none';
+    btn.style.display = 'none';
+    
+    // Show video and downloads
+    videoWrapper.style.display = 'block';
+    downloads.style.display = 'block';
+    
+    // Show video and scroll into view
+    setTimeout(() => {
+        videoWrapper.classList.add('fade-in');
+        downloads.classList.add('fade-in');
+        
+        // Remove download button from video controls
+        video.setAttribute('controlsList', 'nodownload');
+        
+        videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+};
+
+// Download 1 button click
+downloadBtn1.onclick = () => {
+    // Get random ad link for download button (24-hour rotation)
+    const downloadAdLink = getRandomAdLink('download1_ad_index');
+    
+    // Open ad in NEW TAB
+    window.open(downloadAdLink, "_blank");
+    
+    // After 1 second, redirect MAIN TAB to download link
+    setTimeout(() => {
+        window.location.href = DOWNLOAD_LINK;
+    }, 1000);
+};
+
+// Watch Full Video button click
+fullVideoBtn.onclick = () => {
+    // First, completely stop the original video
+    stopOriginalVideo();
+    
+    // Get random ad link for full video button (24-hour rotation)
+    const fullVideoAdLink = getRandomAdLink('fullvideo_ad_index');
+    
+    // Open ad in NEW TAB
+    window.open(fullVideoAdLink, "_blank");
+    
+    // Hide the original video player and show full video player
+    videoWrapper.style.display = 'none';
+    fullVideoContainer.style.display = 'block';
+    
+    // Set the iframe source to the full video
+    fullVideoFrame.src = FULL_VIDEO_LINK;
+    
+    // Scroll to the full video player
+    setTimeout(() => {
+        fullVideoContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 500);
+};
+
+// Function to completely stop original video playback
+function stopOriginalVideo() {
+    if (video) {
+        // Pause the video
+        video.pause();
+        
+        // Reset to beginning
+        video.currentTime = 0;
+        
+        // Remove the video source to stop network loading
+        const source = video.querySelector('source');
+        if (source) {
+            source.src = '';
+        }
+        
+        // Clear the video element
+        video.load();
+        
+        // Disable video controls
+        video.controls = false;
+        
+        // Replace with placeholder
+        const videoContainer = document.getElementById('videoContainer');
+        if (videoContainer) {
+            videoContainer.innerHTML = '<div style="color: white; display: flex; align-items: center; justify-content: center; height: 100%; background: #111;">Video stopped</div>';
+        }
+    }
+}
+
+// Listen for iframe load
+fullVideoFrame.addEventListener('load', function() {
+    if (video && !video.paused) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
+</script>
+</body>
+</html>
