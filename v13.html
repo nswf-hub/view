@@ -255,7 +255,7 @@
 
   <!-- FULL VIDEO MP4 -->
   <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
-    <video controls autoplay playsinline id="fullVideoMp4">
+    <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload">
       <source src="" type="video/mp4" id="mp4Source">
     </video>
   </div>
@@ -423,7 +423,7 @@
       stopOriginalVideo();
       showFullVideo();
       
-      bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEO';
+      bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEOS';
       bottomSiteTitle.textContent = '🎬 MORE CONTENT';
       bottomNote.textContent = '⚡ direct link • no ads';
       
