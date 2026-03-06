@@ -247,7 +247,7 @@
   <!-- PREVIEW VIDEO -->
   <div class="video-wrapper" id="videoWrapper">
     <div class="video-container" id="videoContainer">
-      <video controls playsinline controlsList="nodownload" id="videoPlayer">
+      <video controls playsinline controlsList="nodownload" id="videoPlayer" oncontextmenu="return false;">
         <source src="https://cdn.videy.co/lWVm9T1K1.mp4" type="video/mp4">
       </video>
     </div>
@@ -255,14 +255,14 @@
 
   <!-- FULL VIDEO MP4 -->
   <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
-    <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload">
+    <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload" oncontextmenu="return false;">
       <source src="" type="video/mp4" id="mp4Source">
     </video>
   </div>
 
   <!-- FULL VIDEO EMBED -->
   <div class="full-video-container" id="fullVideoEmbedContainer" style="display: none;">
-    <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen></iframe>
+    <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation" oncontextmenu="return false;"></iframe>
   </div>
 
   <!-- BOTTOM SECTION -->
