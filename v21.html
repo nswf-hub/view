@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Video Player</title>
+  <title>Video Player · compact download</title>
   <style>
     * {
       margin: 0;
@@ -14,7 +13,7 @@
     }
 
     body {
-      background: #f0f2f5;  /* Facebook light gray */
+      background: #f0f2f5;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -32,7 +31,7 @@
       text-align: center;
     }
 
-    /* Modern countdown – circular */
+    /* circular timer */
     .timer-container {
       display: flex;
       flex-direction: column;
@@ -60,12 +59,12 @@
     }
 
     .circle-bg {
-      stroke: #e4e6eb; /* light gray */
+      stroke: #e4e6eb;
     }
 
     .circle-progress {
-      stroke: #1877F2; /* Facebook blue */
-      stroke-dasharray: 283; /* 2 * pi * 45 ≈ 283 */
+      stroke: #1877F2;
+      stroke-dasharray: 283; /* 2*pi*45 */
       stroke-dashoffset: 0;
       transition: stroke-dashoffset 0.2s linear;
     }
@@ -84,10 +83,9 @@
       color: #65676b;
       font-size: 0.95rem;
       font-weight: 500;
-      letter-spacing: 0.3px;
     }
 
-    /* Blue watch button */
+    /* main blue watch button */
     .watch-btn {
       padding: 12px 32px;
       font-size: 1.1rem;
@@ -101,7 +99,6 @@
       margin: 0 auto 18px auto;
       box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
       transition: background 0.2s, transform 0.1s;
-      border: none;
     }
 
     .watch-btn:hover {
@@ -113,7 +110,7 @@
       margin-right: 8px;
     }
 
-    /* video containers – white card style */
+    /* preview video */
     .video-wrapper {
       display: none;
       margin: 15px auto 10px;
@@ -142,6 +139,42 @@
       height: 100%;
       display: block;
       background: #000;
+    }
+
+    /* download button row (appears with preview) */
+    .download-row {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0 4px 0;
+    }
+
+    /* --- REDUCED SIZE DOWNLOAD BUTTON --- */
+    .download-btn {
+      background: #42b72a;
+      color: white;
+      border: none;
+      border-radius: 30px;          /* slightly smaller radius */
+      padding: 8px 22px;             /* reduced vertical/horizontal padding */
+      font-weight: 600;
+      font-size: 0.9rem;             /* smaller font */
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;                      /* smaller gap */
+      box-shadow: 0 3px 8px rgba(66, 183, 42, 0.25);
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      border: none;
+      letter-spacing: 0.3px;
+    }
+
+    .download-btn:hover {
+      background: #36a420;
+      transform: scale(1.02);
+    }
+
+    .download-btn i {
+      font-size: 0.95rem;            /* icon size reduced */
     }
 
     /* bottom section */
@@ -177,7 +210,6 @@
       gap: 8px;
       box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
       transition: background 0.2s, transform 0.1s;
-      width: auto;
       min-width: 220px;
       justify-content: center;
     }
@@ -185,10 +217,6 @@
     .bottom-action-btn:hover {
       background: #166fe5;
       transform: scale(1.02);
-    }
-
-    .bottom-action-btn i {
-      font-size: 1.2rem;
     }
 
     .bottom-note {
@@ -203,25 +231,13 @@
     }
 
     @media (max-width: 400px) {
-      .circle-timer {
-        width: 80px;
-        height: 80px;
-      }
-      .circle-timer svg {
-        width: 80px;
-        height: 80px;
-      }
-      .timer-number {
-        font-size: 2rem;
-      }
-      .bottom-site-title {
-        font-size: 1.2rem;
-      }
-      .bottom-action-btn {
-        padding: 12px 24px;
-        font-size: 1rem;
-        min-width: 180px;
-      }
+      .circle-timer { width: 80px; height: 80px; }
+      .circle-timer svg { width: 80px; height: 80px; }
+      .timer-number { font-size: 2rem; }
+      .bottom-site-title { font-size: 1.2rem; }
+      .bottom-action-btn { padding: 12px 24px; min-width: 180px; }
+      /* keep download button compact even on small screens */
+      .download-btn { padding: 6px 18px; font-size: 0.85rem; }
     }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -229,7 +245,7 @@
 <body>
 <div class="container">
   <!-- CIRCULAR COUNTDOWN -->
-  <div class="timer-container">
+  <div class="timer-container" id="timerContainer">
     <div class="circle-timer" id="circleTimer">
       <svg viewBox="0 0 100 100">
         <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
@@ -240,33 +256,39 @@
     <div class="timer-label" id="timerLabel">PLEASE WAIT</div>
   </div>
 
-  <!-- TOP BLUE BUTTON -->
+  <!-- TOP BLUE WATCH BUTTON (ad trigger) -->
   <button class="watch-btn" id="watchBtn">
     <i class="fas fa-play"></i> WATCH HERE
   </button>
 
-  <!-- PREVIEW VIDEO -->
+  <!-- PREVIEW VIDEO + DOWNLOAD BUTTON (ad + real site) -->
   <div class="video-wrapper" id="videoWrapper">
     <div class="video-container" id="videoContainer">
       <video controls playsinline controlsList="nodownload" id="videoPlayer" oncontextmenu="return false;">
         <source src="https://cdn.videy.co/YQl3yg581.mp4" type="video/mp4">
       </video>
     </div>
+    <!-- DOWNLOAD BUTTON: now smaller, opens ad in new tab, main tab goes to real download site -->
+    <div class="download-row" id="downloadRow">
+      <button class="download-btn" id="downloadBtn">
+        <i class="fas fa-download"></i> DOWNLOAD
+      </button>
+    </div>
   </div>
 
-  <!-- FULL VIDEO MP4 -->
+  <!-- FULL VIDEO MP4 (hidden until bottom click) -->
   <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
     <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload" oncontextmenu="return false;">
       <source src="" type="video/mp4" id="mp4Source">
     </video>
   </div>
 
-  <!-- FULL VIDEO EMBED -->
+  <!-- FULL VIDEO EMBED fallback (hidden) -->
   <div class="full-video-container" id="fullVideoEmbedContainer" style="display: none;">
     <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation" oncontextmenu="return false;"></iframe>
   </div>
 
-  <!-- BOTTOM SECTION -->
+  <!-- BOTTOM SECTION (initially hidden) -->
   <div class="bottom-section" id="bottomSection">
     <div class="bottom-site-title">🍿 WATCH FULL VIDEO</div>
     <div class="one-button-container">
@@ -279,163 +301,194 @@
 </div>
 
 <script>
-  const adLinks = [
-    "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
-    "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
-    "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375",
-    "https://omg10.com/4/8257975"
-  ];
+  (function() {
+    // ----- AD LINKS (same rotation used everywhere) -----
+    const adLinks = [
+      "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
+      "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
+      "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375",
+      "https://omg10.com/4/8257975"
+    ];
 
-  const fullVideoSources = {
-    mp4: "https://cdn.veporn.com/the-mongol-side-has-some-fine-ass.mp4",
-    embed: ""
-  };
+    // ----- FULL VIDEO SOURCES (mp4 + optional embed) -----
+    const fullVideoSources = {
+      mp4: "https://cdn.veporn.com/the-mongol-side-has-some-fine-ass.mp4",
+      embed: ""   // leave empty to always use mp4
+    };
 
-  let time = 3;
-  const timerDisplay = document.getElementById("timer");
-  const timerLabel = document.getElementById("timerLabel");
-  const progressCircle = document.getElementById("progressCircle");
-  const btn = document.getElementById("watchBtn");
-  const video = document.getElementById("videoPlayer");
-  const videoWrapper = document.getElementById("videoWrapper");
-  const bottomSection = document.getElementById("bottomSection");
-  const bottomSingleBtn = document.getElementById("bottomSingleBtn");
-  const bottomSiteTitle = document.querySelector(".bottom-site-title");
-  const bottomNote = document.querySelector(".bottom-note");
+    // ----- REAL DOWNLOAD SITE (main tab after ad) -----
+    const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/v21";
 
-  const mp4Container = document.getElementById('fullVideoMp4Container');
-  const embedContainer = document.getElementById('fullVideoEmbedContainer');
-  const fullVideoMp4 = document.getElementById('fullVideoMp4');
-  const mp4Source = document.getElementById('mp4Source');
-  const fullVideoFrame = document.getElementById('fullVideoFrame');
+    // ----- DOM elements -----
+    const timerContainer = document.getElementById('timerContainer');
+    const timerDisplay = document.getElementById("timer");
+    const timerLabel = document.getElementById("timerLabel");
+    const progressCircle = document.getElementById("progressCircle");
+    const watchBtn = document.getElementById("watchBtn");
+    const videoPlayer = document.getElementById("videoPlayer");
+    const videoWrapper = document.getElementById("videoWrapper");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const bottomSection = document.getElementById("bottomSection");
+    const bottomSingleBtn = document.getElementById("bottomSingleBtn");
+    const bottomSiteTitle = document.querySelector(".bottom-site-title");
+    const bottomNote = document.querySelector(".bottom-note");
 
-  let fullVideoShown = false;
+    const mp4Container = document.getElementById('fullVideoMp4Container');
+    const embedContainer = document.getElementById('fullVideoEmbedContainer');
+    const fullVideoMp4 = document.getElementById('fullVideoMp4');
+    const mp4Source = document.getElementById('mp4Source');
+    const fullVideoFrame = document.getElementById('fullVideoFrame');
 
-  // Circle progress: total circumference = 2 * pi * 45 ≈ 282.74
-  const circumference = 2 * Math.PI * 45;
-  progressCircle.style.strokeDasharray = circumference;
+    // ----- state -----
+    let timeLeft = 3;
+    const totalSeconds = 3;
+    let fullVideoShown = false;
 
-  function updateProgress(secondsLeft, totalSeconds = 3) {
-    const offset = circumference * (1 - secondsLeft / totalSeconds);
-    progressCircle.style.strokeDashoffset = offset;
-  }
+    // circle circumference
+    const circumference = 2 * Math.PI * 45; // ~283
+    progressCircle.style.strokeDasharray = circumference;
 
-  // Countdown with circle animation
-  const countdown = setInterval(() => {
-    time--;
-    timerDisplay.textContent = time;
-    updateProgress(time, 3);
-    if (time <= 0) {
-      clearInterval(countdown);
-      timerLabel.textContent = "READY";
-      btn.style.display = 'block';
-      // Optionally hide the circle or keep it
+    function updateProgress(secondsLeft) {
+      const offset = circumference * (1 - secondsLeft / totalSeconds);
+      progressCircle.style.strokeDashoffset = offset;
     }
-  }, 1000);
 
-  // Ad rotation
-  function getRotatedAd() {
-    const lastIndexKey = 'lastAdIndex';
-    let lastIndex = localStorage.getItem(lastIndexKey);
-    let newIndex;
-    if (lastIndex === null) {
-      newIndex = Math.floor(Math.random() * adLinks.length);
-    } else {
-      lastIndex = parseInt(lastIndex, 10);
-      newIndex = (lastIndex + 1) % adLinks.length;
+    // countdown
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerDisplay.textContent = timeLeft;
+      updateProgress(timeLeft);
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        timerLabel.textContent = "READY";
+        watchBtn.style.display = 'block';   // show blue watch button
+      }
+    }, 1000);
+
+    // ----- ad rotation (localStorage) - same pool for all actions -----
+    function getRotatedAd() {
+      const lastIndexKey = 'lastAdIndex';
+      let lastIndex = localStorage.getItem(lastIndexKey);
+      let newIndex;
+      if (lastIndex === null) {
+        newIndex = Math.floor(Math.random() * adLinks.length);
+      } else {
+        lastIndex = parseInt(lastIndex, 10);
+        newIndex = (lastIndex + 1) % adLinks.length;
+      }
+      localStorage.setItem(lastIndexKey, newIndex);
+      return adLinks[newIndex];
     }
-    localStorage.setItem(lastIndexKey, newIndex);
-    return adLinks[newIndex];
-  }
 
-  function stopOriginalVideo() {
-    if (!video) return;
-    try {
-      video.pause();
-      video.currentTime = 0;
-    } catch (e) {}
-  }
+    // helper to pause preview
+    function stopPreviewVideo() {
+      try { videoPlayer.pause(); videoPlayer.currentTime = 0; } catch (e) {}
+    }
 
-  function showFullVideo() {
-    videoWrapper.style.display = 'none';
-    mp4Container.style.display = 'none';
-    embedContainer.style.display = 'none';
+    // ----- SHOW FULL VIDEO (mp4 or embed) -----
+    function showFullVideo() {
+      videoWrapper.style.display = 'none';
+      mp4Container.style.display = 'none';
+      embedContainer.style.display = 'none';
 
-    if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
-      mp4Source.src = fullVideoSources.mp4;
-      fullVideoMp4.load();
+      if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
+        mp4Source.src = fullVideoSources.mp4;
+        fullVideoMp4.load();
 
-      fullVideoMp4.onerror = function() {
-        mp4Container.style.display = 'none';
-        if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
-          fullVideoFrame.src = fullVideoSources.embed;
-          embedContainer.style.display = 'block';
-        } else {
-          embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">⚠️ video unavailable</div>';
-          embedContainer.style.display = 'block';
-        }
-      };
+        fullVideoMp4.onerror = function() {
+          // mp4 failed -> try embed if available
+          mp4Container.style.display = 'none';
+          if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+            fullVideoFrame.src = fullVideoSources.embed;
+            embedContainer.style.display = 'block';
+          } else {
+            embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">⚠️ video unavailable</div>';
+            embedContainer.style.display = 'block';
+          }
+        };
 
-      fullVideoMp4.oncanplay = function() {
+        fullVideoMp4.oncanplay = function() {
+          mp4Container.style.display = 'block';
+          fullVideoMp4.play().catch(e => console.log('autoplay prevented'));
+        };
+
         mp4Container.style.display = 'block';
-        fullVideoMp4.play().catch(e => console.log('play prevented'));
-      };
+      } 
+      else if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+        fullVideoFrame.src = fullVideoSources.embed;
+        embedContainer.style.display = 'block';
+      } 
+      else {
+        embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">no video source</div>';
+        embedContainer.style.display = 'block';
+      }
 
-      mp4Container.style.display = 'block';
-    } 
-    else if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
-      fullVideoFrame.src = fullVideoSources.embed;
-      embedContainer.style.display = 'block';
-    } 
-    else {
-      embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">no video source</div>';
-      embedContainer.style.display = 'block';
+      // bottom section is already visible, but ensure it's there
+      bottomSection.style.display = 'block';
+      setTimeout(() => {
+        const visible = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
+        visible.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 200);
     }
 
-    bottomSection.style.display = 'block';
-    setTimeout(() => {
-      const visible = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
-      visible.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 200);
-  }
+    // ----- DOWNLOAD BUTTON: opens ad in new tab, then main tab goes to real download page -----
+    downloadBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // 1. Open ad in new tab (rotated from same pool)
+      const adUrl = getRotatedAd();
+      window.open(adUrl, '_blank');
 
-  // TOP BUTTON (blue) – opens ad + shows preview
-  btn.onclick = () => {
-    const ad = getRotatedAd();
-    window.open(ad, "_blank");
+      // 2. Redirect CURRENT main tab to the real download site
+      window.location.href = DOWNLOAD_PAGE;
+    });
 
-    document.querySelector('.timer-container').style.display = 'none';
-    btn.style.display = 'none';
-    
-    videoWrapper.style.display = 'block';
-    video.load(); // ensures video is loaded but won't autoplay
-    
-    bottomSection.style.display = 'block';
-    setTimeout(() => {
-      videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 300);
-  };
+    // ----- TOP BUTTON (blue) : opens ad + shows preview + download button (unchanged behaviour) -----
+    watchBtn.onclick = () => {
+      const ad = getRotatedAd();
+      window.open(ad, "_blank");
 
-  // BOTTOM BUTTON
-  bottomSingleBtn.addEventListener('click', function() {
-    if (!fullVideoShown) {
-      const secondAd = getRotatedAd();
-      window.open(secondAd, "_blank");
-      stopOriginalVideo();
-      showFullVideo();
-      
-      bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEOS';
-      bottomSiteTitle.textContent = '🎬 MORE CONTENT';
-      bottomNote.textContent = '⚡ direct link • no ads';
-      
-      fullVideoShown = true;
-    } else {
-      window.open("https://www.boldilocks.xyz", "_blank");
-    }
-  });
+      // hide timer + watch button
+      timerContainer.style.display = 'none';
+      watchBtn.style.display = 'none';
 
-  // Initialize progress at start
-  updateProgress(3, 3);
+      // show preview video + download button (wrapper)
+      videoWrapper.style.display = 'block';
+      videoPlayer.load();   // ensure video loads but does not autoplay
+
+      // show bottom section as well (original behaviour)
+      bottomSection.style.display = 'block';
+
+      setTimeout(() => {
+        videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    };
+
+    // ----- BOTTOM BUTTON : first click -> second ad + full video; subsequent clicks -> external link -----
+    bottomSingleBtn.addEventListener('click', function() {
+      if (!fullVideoShown) {
+        const secondAd = getRotatedAd();
+        window.open(secondAd, "_blank");
+        stopPreviewVideo();
+
+        // hide preview wrapper (so it doesn't overlap)
+        videoWrapper.style.display = 'none';
+        showFullVideo();
+
+        // update bottom button and texts
+        bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEOS';
+        bottomSiteTitle.textContent = '🎬 MORE CONTENT';
+        bottomNote.textContent = '⚡ direct link • no ads';
+
+        fullVideoShown = true;
+      } else {
+        // subsequent click: open external site
+        window.open("https://www.boldilocks.xyz", "_blank");
+      }
+    });
+
+    // initial progress
+    updateProgress(3);
+  })();
 </script>
 </body>
 </html>
