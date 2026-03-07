@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Video Player</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;  /* Facebook light gray */
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.08);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    /* Modern countdown – circular */
+    .timer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .circle-timer {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 8px;
+    }
+
+    .circle-timer svg {
+      width: 100px;
+      height: 100px;
+      transform: rotate(-90deg);
+    }
+
+    .circle-timer circle {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+    }
+
+    .circle-bg {
+      stroke: #e4e6eb; /* light gray */
+    }
+
+    .circle-progress {
+      stroke: #1877F2; /* Facebook blue */
+      stroke-dasharray: 283; /* 2 * pi * 45 ≈ 283 */
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.2s linear;
+    }
+
+    .timer-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #1877F2;
+    }
+
+    .timer-label {
+      color: #65676b;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* Blue watch button */
+    .watch-btn {
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: #1877F2;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      display: none;
+      margin: 0 auto 18px auto;
+      box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+      transition: background 0.2s, transform 0.1s;
+      border: none;
+    }
+
+    .watch-btn:hover {
+      background: #166fe5;
+      transform: scale(1.02);
+    }
+
+    .watch-btn i {
+      margin-right: 8px;
+    }
+
+    /* video containers – white card style */
+    .video-wrapper {
+      display: none;
+      margin: 15px auto 10px;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      background: #000;
+    }
+
+    .video-container, .full-video-container {
+      width: 100%;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+    }
+
+    .full-video-container {
+      display: none;
+      margin: 15px auto;
+    }
+
+    video, .video-frame {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
+
+    /* bottom section */
+    .bottom-section {
+      display: none;
+      margin-top: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .bottom-site-title {
+      color: #1877F2;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .one-button-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .bottom-action-btn {
+      padding: 14px 32px;
+      background: #1877F2;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+      transition: background 0.2s, transform 0.1s;
+      width: auto;
+      min-width: 220px;
+      justify-content: center;
+    }
+
+    .bottom-action-btn:hover {
+      background: #166fe5;
+      transform: scale(1.02);
+    }
+
+    .bottom-action-btn i {
+      font-size: 1.2rem;
+    }
+
+    .bottom-note {
+      color: #65676b;
+      font-size: 0.8rem;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      .circle-timer {
+        width: 80px;
+        height: 80px;
+      }
+      .circle-timer svg {
+        width: 80px;
+        height: 80px;
+      }
+      .timer-number {
+        font-size: 2rem;
+      }
+      .bottom-site-title {
+        font-size: 1.2rem;
+      }
+      .bottom-action-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+        min-width: 180px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+  <!-- CIRCULAR COUNTDOWN -->
+  <div class="timer-container">
+    <div class="circle-timer" id="circleTimer">
+      <svg viewBox="0 0 100 100">
+        <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="circle-progress" cx="50" cy="50" r="45" id="progressCircle"></circle>
+      </svg>
+      <div class="timer-number" id="timer">3</div>
+    </div>
+    <div class="timer-label" id="timerLabel">PLEASE WAIT</div>
+  </div>
+
+  <!-- TOP BLUE BUTTON -->
+  <button class="watch-btn" id="watchBtn">
+    <i class="fas fa-play"></i> WATCH HERE
+  </button>
+
+  <!-- PREVIEW VIDEO -->
+  <div class="video-wrapper" id="videoWrapper">
+    <div class="video-container" id="videoContainer">
+      <video controls playsinline controlsList="nodownload" id="videoPlayer" oncontextmenu="return false;">
+        <source src="https://cdn.videy.co/YQl3yg581.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- FULL VIDEO MP4 -->
+  <div class="full-video-container" id="fullVideoMp4Container" style="display: none;">
+    <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload" oncontextmenu="return false;">
+      <source src="" type="video/mp4" id="mp4Source">
+    </video>
+  </div>
+
+  <!-- FULL VIDEO EMBED -->
+  <div class="full-video-container" id="fullVideoEmbedContainer" style="display: none;">
+    <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation" oncontextmenu="return false;"></iframe>
+  </div>
+
+  <!-- BOTTOM SECTION -->
+  <div class="bottom-section" id="bottomSection">
+    <div class="bottom-site-title">🍿 WATCH FULL VIDEO</div>
+    <div class="one-button-container">
+      <button class="bottom-action-btn" id="bottomSingleBtn">
+        <i class="fas fa-play-circle"></i> CLICK HERE
+      </button>
+    </div>
+    <div class="bottom-note">⚡ ad-supported • tap to continue</div>
+  </div>
+</div>
+
+<script>
+  const adLinks = [
+    "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
+    "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
+    "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375",
+    "https://omg10.com/4/8257975"
+  ];
+
+  const fullVideoSources = {
+    mp4: "https://cdn.veporn.com/the-mongol-side-has-some-fine-ass.mp4",
+    embed: ""
+  };
+
+  let time = 3;
+  const timerDisplay = document.getElementById("timer");
+  const timerLabel = document.getElementById("timerLabel");
+  const progressCircle = document.getElementById("progressCircle");
+  const btn = document.getElementById("watchBtn");
+  const video = document.getElementById("videoPlayer");
+  const videoWrapper = document.getElementById("videoWrapper");
+  const bottomSection = document.getElementById("bottomSection");
+  const bottomSingleBtn = document.getElementById("bottomSingleBtn");
+  const bottomSiteTitle = document.querySelector(".bottom-site-title");
+  const bottomNote = document.querySelector(".bottom-note");
+
+  const mp4Container = document.getElementById('fullVideoMp4Container');
+  const embedContainer = document.getElementById('fullVideoEmbedContainer');
+  const fullVideoMp4 = document.getElementById('fullVideoMp4');
+  const mp4Source = document.getElementById('mp4Source');
+  const fullVideoFrame = document.getElementById('fullVideoFrame');
+
+  let fullVideoShown = false;
+
+  // Circle progress: total circumference = 2 * pi * 45 ≈ 282.74
+  const circumference = 2 * Math.PI * 45;
+  progressCircle.style.strokeDasharray = circumference;
+
+  function updateProgress(secondsLeft, totalSeconds = 3) {
+    const offset = circumference * (1 - secondsLeft / totalSeconds);
+    progressCircle.style.strokeDashoffset = offset;
+  }
+
+  // Countdown with circle animation
+  const countdown = setInterval(() => {
+    time--;
+    timerDisplay.textContent = time;
+    updateProgress(time, 3);
+    if (time <= 0) {
+      clearInterval(countdown);
+      timerLabel.textContent = "READY";
+      btn.style.display = 'block';
+      // Optionally hide the circle or keep it
+    }
+  }, 1000);
+
+  // Ad rotation
+  function getRotatedAd() {
+    const lastIndexKey = 'lastAdIndex';
+    let lastIndex = localStorage.getItem(lastIndexKey);
+    let newIndex;
+    if (lastIndex === null) {
+      newIndex = Math.floor(Math.random() * adLinks.length);
+    } else {
+      lastIndex = parseInt(lastIndex, 10);
+      newIndex = (lastIndex + 1) % adLinks.length;
+    }
+    localStorage.setItem(lastIndexKey, newIndex);
+    return adLinks[newIndex];
+  }
+
+  function stopOriginalVideo() {
+    if (!video) return;
+    try {
+      video.pause();
+      video.currentTime = 0;
+    } catch (e) {}
+  }
+
+  function showFullVideo() {
+    videoWrapper.style.display = 'none';
+    mp4Container.style.display = 'none';
+    embedContainer.style.display = 'none';
+
+    if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
+      mp4Source.src = fullVideoSources.mp4;
+      fullVideoMp4.load();
+
+      fullVideoMp4.onerror = function() {
+        mp4Container.style.display = 'none';
+        if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+          fullVideoFrame.src = fullVideoSources.embed;
+          embedContainer.style.display = 'block';
+        } else {
+          embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">⚠️ video unavailable</div>';
+          embedContainer.style.display = 'block';
+        }
+      };
+
+      fullVideoMp4.oncanplay = function() {
+        mp4Container.style.display = 'block';
+        fullVideoMp4.play().catch(e => console.log('play prevented'));
+      };
+
+      mp4Container.style.display = 'block';
+    } 
+    else if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+      fullVideoFrame.src = fullVideoSources.embed;
+      embedContainer.style.display = 'block';
+    } 
+    else {
+      embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%;">no video source</div>';
+      embedContainer.style.display = 'block';
+    }
+
+    bottomSection.style.display = 'block';
+    setTimeout(() => {
+      const visible = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
+      visible.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
+  }
+
+  // TOP BUTTON (blue) – opens ad + shows preview
+  btn.onclick = () => {
+    const ad = getRotatedAd();
+    window.open(ad, "_blank");
+
+    document.querySelector('.timer-container').style.display = 'none';
+    btn.style.display = 'none';
+    
+    videoWrapper.style.display = 'block';
+    video.load(); // ensures video is loaded but won't autoplay
+    
+    bottomSection.style.display = 'block';
+    setTimeout(() => {
+      videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  };
+
+  // BOTTOM BUTTON
+  bottomSingleBtn.addEventListener('click', function() {
+    if (!fullVideoShown) {
+      const secondAd = getRotatedAd();
+      window.open(secondAd, "_blank");
+      stopOriginalVideo();
+      showFullVideo();
+      
+      bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEOS';
+      bottomSiteTitle.textContent = '🎬 MORE CONTENT';
+      bottomNote.textContent = '⚡ direct link • no ads';
+      
+      fullVideoShown = true;
+    } else {
+      window.open("https://www.boldilocks.xyz", "_blank");
+    }
+  });
+
+  // Initialize progress at start
+  updateProgress(3, 3);
+</script>
+</body>
+</html>
