@@ -110,6 +110,42 @@
       margin-right: 8px;
     }
 
+    /* NEW SEPARATE DOWNLOAD BUTTON SECTION - above video */
+    .download-section {
+      display: none;
+      justify-content: center;
+      margin: 0 0 15px 0;
+      width: 100%;
+    }
+
+    .download-btn {
+      background: #42b72a;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 8px 22px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 3px 8px rgba(66, 183, 42, 0.25);
+      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      border: none;
+      letter-spacing: 0.3px;
+    }
+
+    .download-btn:hover {
+      background: #36a420;
+      transform: scale(1.02);
+    }
+
+    .download-btn i {
+      font-size: 0.95rem;
+    }
+
     /* preview video */
     .video-wrapper {
       display: none;
@@ -139,42 +175,6 @@
       height: 100%;
       display: block;
       background: #000;
-    }
-
-    /* download button row (appears with preview) */
-    .download-row {
-      display: flex;
-      justify-content: center;
-      margin: 8px 0 4px 0;
-    }
-
-    /* --- REDUCED SIZE DOWNLOAD BUTTON --- */
-    .download-btn {
-      background: #42b72a;
-      color: white;
-      border: none;
-      border-radius: 30px;          /* slightly smaller radius */
-      padding: 8px 22px;             /* reduced vertical/horizontal padding */
-      font-weight: 600;
-      font-size: 0.9rem;             /* smaller font */
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;                      /* smaller gap */
-      box-shadow: 0 3px 8px rgba(66, 183, 42, 0.25);
-      transition: background 0.2s, transform 0.1s;
-      text-decoration: none;
-      border: none;
-      letter-spacing: 0.3px;
-    }
-
-    .download-btn:hover {
-      background: #36a420;
-      transform: scale(1.02);
-    }
-
-    .download-btn i {
-      font-size: 0.95rem;            /* icon size reduced */
     }
 
     /* bottom section */
@@ -236,7 +236,6 @@
       .timer-number { font-size: 2rem; }
       .bottom-site-title { font-size: 1.2rem; }
       .bottom-action-btn { padding: 12px 24px; min-width: 180px; }
-      /* keep download button compact even on small screens */
       .download-btn { padding: 6px 18px; font-size: 0.85rem; }
     }
   </style>
@@ -256,23 +255,24 @@
     <div class="timer-label" id="timerLabel">PLEASE WAIT</div>
   </div>
 
-  <!-- TOP BLUE WATCH BUTTON (ad trigger) -->
+  <!-- TOP BLUE WATCH BUTTON -->
   <button class="watch-btn" id="watchBtn">
     <i class="fas fa-play"></i> WATCH HERE
   </button>
 
-  <!-- PREVIEW VIDEO + DOWNLOAD BUTTON (ad + real site) -->
+  <!-- NEW SEPARATE DOWNLOAD BUTTON SECTION - above video -->
+  <div class="download-section" id="downloadSection">
+    <button class="download-btn" id="downloadBtn">
+      <i class="fas fa-download"></i> DOWNLOAD
+    </button>
+  </div>
+
+  <!-- PREVIEW VIDEO (NO DOWNLOAD BUTTON INSIDE) -->
   <div class="video-wrapper" id="videoWrapper">
     <div class="video-container" id="videoContainer">
       <video controls playsinline controlsList="nodownload" id="videoPlayer" oncontextmenu="return false;">
         <source src="https://cdn.videy.co/QYfFjktV1.mp4" type="video/mp4">
       </video>
-    </div>
-    <!-- DOWNLOAD BUTTON: now smaller, opens ad in new tab, main tab goes to real download site -->
-    <div class="download-row" id="downloadRow">
-      <button class="download-btn" id="downloadBtn">
-        <i class="fas fa-download"></i> DOWNLOAD
-      </button>
     </div>
   </div>
 
@@ -288,7 +288,7 @@
     <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation" oncontextmenu="return false;"></iframe>
   </div>
 
-  <!-- BOTTOM SECTION (initially hidden) -->
+  <!-- BOTTOM SECTION -->
   <div class="bottom-section" id="bottomSection">
     <div class="bottom-site-title">🍿 WATCH FULL VIDEO</div>
     <div class="one-button-container">
@@ -302,7 +302,7 @@
 
 <script>
   (function() {
-    // ----- AD LINKS (same rotation used everywhere) -----
+    // ----- AD LINKS -----
     const adLinks = [
       "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
       "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
@@ -310,13 +310,13 @@
       "https://omg10.com/4/8257975"
     ];
 
-    // ----- FULL VIDEO SOURCES (mp4 + optional embed) -----
+    // ----- FULL VIDEO SOURCES -----
     const fullVideoSources = {
       mp4: "https://cdn.veporn.com/you-are-better-at-this-than-you-thought.mp4",
-      embed: ""   // leave empty to always use mp4
+      embed: ""
     };
 
-    // ----- REAL DOWNLOAD SITE (main tab after ad) -----
+    // ----- REAL DOWNLOAD SITE -----
     const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/v20";
 
     // ----- DOM elements -----
@@ -327,6 +327,7 @@
     const watchBtn = document.getElementById("watchBtn");
     const videoPlayer = document.getElementById("videoPlayer");
     const videoWrapper = document.getElementById("videoWrapper");
+    const downloadSection = document.getElementById("downloadSection");
     const downloadBtn = document.getElementById("downloadBtn");
     const bottomSection = document.getElementById("bottomSection");
     const bottomSingleBtn = document.getElementById("bottomSingleBtn");
@@ -344,8 +345,7 @@
     const totalSeconds = 3;
     let fullVideoShown = false;
 
-    // circle circumference
-    const circumference = 2 * Math.PI * 45; // ~283
+    const circumference = 2 * Math.PI * 45;
     progressCircle.style.strokeDasharray = circumference;
 
     function updateProgress(secondsLeft) {
@@ -353,7 +353,6 @@
       progressCircle.style.strokeDashoffset = offset;
     }
 
-    // countdown
     const countdown = setInterval(() => {
       timeLeft--;
       timerDisplay.textContent = timeLeft;
@@ -361,11 +360,10 @@
       if (timeLeft <= 0) {
         clearInterval(countdown);
         timerLabel.textContent = "READY";
-        watchBtn.style.display = 'block';   // show blue watch button
+        watchBtn.style.display = 'block';
       }
     }, 1000);
 
-    // ----- ad rotation (localStorage) - same pool for all actions -----
     function getRotatedAd() {
       const lastIndexKey = 'lastAdIndex';
       let lastIndex = localStorage.getItem(lastIndexKey);
@@ -380,12 +378,10 @@
       return adLinks[newIndex];
     }
 
-    // helper to pause preview
     function stopPreviewVideo() {
       try { videoPlayer.pause(); videoPlayer.currentTime = 0; } catch (e) {}
     }
 
-    // ----- SHOW FULL VIDEO (mp4 or embed) -----
     function showFullVideo() {
       videoWrapper.style.display = 'none';
       mp4Container.style.display = 'none';
@@ -396,7 +392,6 @@
         fullVideoMp4.load();
 
         fullVideoMp4.onerror = function() {
-          // mp4 failed -> try embed if available
           mp4Container.style.display = 'none';
           if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
             fullVideoFrame.src = fullVideoSources.embed;
@@ -423,7 +418,6 @@
         embedContainer.style.display = 'block';
       }
 
-      // bottom section is already visible, but ensure it's there
       bottomSection.style.display = 'block';
       setTimeout(() => {
         const visible = mp4Container.style.display === 'block' ? mp4Container : embedContainer;
@@ -431,31 +425,28 @@
       }, 200);
     }
 
-    // ----- DOWNLOAD BUTTON: opens ad in new tab, then main tab goes to real download page -----
+    // DOWNLOAD BUTTON - now in separate section above
     downloadBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      // 1. Open ad in new tab (rotated from same pool)
       const adUrl = getRotatedAd();
       window.open(adUrl, '_blank');
-
-      // 2. Redirect CURRENT main tab to the real download site
       window.location.href = DOWNLOAD_PAGE;
     });
 
-    // ----- TOP BUTTON (blue) : opens ad + shows preview + download button (unchanged behaviour) -----
     watchBtn.onclick = () => {
       const ad = getRotatedAd();
       window.open(ad, "_blank");
 
-      // hide timer + watch button
       timerContainer.style.display = 'none';
       watchBtn.style.display = 'none';
 
-      // show preview video + download button (wrapper)
+      // Show the separate download section ABOVE the video
+      downloadSection.style.display = 'flex';
+      
+      // Show preview video
       videoWrapper.style.display = 'block';
-      videoPlayer.load();   // ensure video loads but does not autoplay
+      videoPlayer.load();
 
-      // show bottom section as well (original behaviour)
       bottomSection.style.display = 'block';
 
       setTimeout(() => {
@@ -463,30 +454,25 @@
       }, 300);
     };
 
-    // ----- BOTTOM BUTTON : first click -> second ad + full video; subsequent clicks -> external link -----
     bottomSingleBtn.addEventListener('click', function() {
       if (!fullVideoShown) {
         const secondAd = getRotatedAd();
         window.open(secondAd, "_blank");
         stopPreviewVideo();
 
-        // hide preview wrapper (so it doesn't overlap)
         videoWrapper.style.display = 'none';
         showFullVideo();
 
-        // update bottom button and texts
         bottomSingleBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> WATCH MORE VIDEOS';
         bottomSiteTitle.textContent = '🎬 MORE CONTENT';
         bottomNote.textContent = '⚡ direct link • no ads';
 
         fullVideoShown = true;
       } else {
-        // subsequent click: open external site
         window.open("https://www.boldilocks.xyz", "_blank");
       }
     });
 
-    // initial progress
     updateProgress(3);
   })();
 </script>
