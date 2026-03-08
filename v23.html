@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Watch Movie Online - Free Streaming</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      /* Background extracted from the banner: dark gradient to match banner's style */
+      background: linear-gradient(135deg, #0b0f1c 0%, #1a1f2f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(18, 22, 35, 0.85); /* semi-transparent dark to blend with body */
+      backdrop-filter: blur(8px); /* subtle blur for modern glass effect */
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      padding: 24px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Banner image */
+    .banner-container {
+      width: 100%;
+      margin-bottom: 20px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .banner-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Video player section - both preview and full video share same container styling */
+    .video-section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .video-wrapper, .full-video-container {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .video-container {
+      width: 100%;
+      background: #000;
+      aspect-ratio: 16/9;
+    }
+
+    video, .video-frame {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
+
+    .full-video-container {
+      display: none; /* hidden by default */
+    }
+
+    /* Action Buttons - centered below the player with Home in the middle */
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center; /* Centers the button group */
+      gap: 16px;
+      margin: 0 auto 25px auto;
+      width: 100%;
+    }
+
+    /* All button styles - consistent height and alignment */
+    .btn-primary, .btn-watch, .btn-outline {
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+      order: 1; /* Ensures Download is first */
+    }
+
+    .btn-primary:hover {
+      background: #3b82f6;
+      transform: scale(1.02);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-watch {
+      background: #7c3aed; /* Purple */
+      color: white;
+      box-shadow: 0 6px 14px rgba(124, 58, 237, 0.4);
+      order: 3; /* Ensures Watch Full Video is third */
+    }
+
+    .btn-watch:hover {
+      background: #8b5cf6;
+      transform: scale(1.02);
+      box-shadow: 0 8px 18px rgba(124, 58, 237, 0.6);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f0f4fa;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      order: 2; /* Ensures Home is second (middle) */
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: scale(1.02);
+    }
+
+    /* Disabled state for watch button after use */
+    .btn-watch:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      pointer-events: none;
+    }
+
+    /* Thumbnails Section - matching main index site dimensions */
+    .thumbnails-section {
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .section-title {
+      color: #f0f4fa;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 15px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .thumbnail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .thumbnail-card {
+      position: relative;
+      border-radius: 10px; /* matching index border-radius */
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* matching index shadow */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .thumbnail-card:hover {
+      transform: scale(1.05); /* matching index hover effect */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      border-color: rgba(124, 58, 237, 0.5);
+      z-index: 2;
+    }
+
+    .thumbnail-img {
+      width: 100%;
+      height: 270px; /* Desktop height - matches main index (270px) */
+      object-fit: cover;
+      display: block;
+      background: #1a1f2f;
+    }
+
+    /* Optional overlay with title on hover (clean) */
+    .thumbnail-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      color: white;
+      padding: 20px 8px 8px 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      text-align: left;
+    }
+
+    .thumbnail-card:hover .thumbnail-title {
+      opacity: 1;
+    }
+
+    /* Mobile styles - matching main index */
+    @media (max-width: 600px) {
+      .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .btn-primary, .btn-watch, .btn-outline {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+
+      /* On mobile, order doesn't matter as they stack vertically */
+      .btn-primary, .btn-watch, .btn-outline {
+        order: 0;
+      }
+
+      .thumbnail-grid {
+        gap: 8px;
+      }
+
+      .thumbnail-img {
+        height: 160px; /* Mobile height - matches main index (160px) */
+      }
+    }
+
+    @media (max-width: 400px) {
+      .thumbnail-img {
+        height: 140px; /* Small mobile - matches main index (140px) */
+      }
+    }
+
+    /* Tablet styles */
+    @media (min-width: 601px) and (max-width: 900px) {
+      .thumbnail-img {
+        height: 225px; /* Tablet - matches main index */
+      }
+    }
+
+    /* Larger desktop adjustments */
+    @media (min-width: 1201px) {
+      .thumbnail-img {
+        height: 300px; /* Large desktop - matches main index */
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css-all.min.css">
+</head>
+<body>
+<div class="container">
+  <!-- BANNER IMAGE (same as main site) -->
+  <div class="banner-container">
+    <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69638ac6f19d6_Addaheading7.jpg" alt="Site banner" class="banner-img">
+  </div>
+
+  <!-- VIDEO PLAYER SECTION - contains both preview and full video, only one visible at a time -->
+  <div class="video-section">
+    <!-- PREVIEW VIDEO PLAYER (visible initially) -->
+    <div class="video-wrapper" id="videoWrapper">
+      <div class="video-container">
+        <video controls playsinline controlsList="nodownload" id="videoPlayer" oncontextmenu="return false;">
+          <source src="https://cdn.videy.co/4AFuRUOv1.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- FULL VIDEO MP4 (hidden until button click) -->
+    <div class="full-video-container" id="fullVideoMp4Container">
+      <video controls autoplay playsinline id="fullVideoMp4" controlsList="nodownload" oncontextmenu="return false;">
+        <source src="" type="video/mp4" id="mp4Source">
+      </video>
+    </div>
+
+    <!-- FULL VIDEO EMBED fallback (hidden) -->
+    <div class="full-video-container" id="fullVideoEmbedContainer">
+      <iframe class="video-frame" id="fullVideoFrame" allow="encrypted-media" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation"></iframe>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS - HOME IS NOW CENTERED BETWEEN DOWNLOAD AND WATCH FULL VIDEO -->
+  <div class="action-buttons">
+    <button class="btn-primary" id="downloadBtn"><i class="fas fa-download"></i> DOWNLOAD</button>
+    <a href="https://www.boldilocks.xyz" class="btn-outline" id="homeBtn" target="_blank"><i class="fas fa-home"></i>HOME</a>
+    <button class="btn-watch" id="watchFullBtn"><i class="fas fa-play-circle"></i> WATCH FULL VIDEO</button>
+  </div>
+
+  <!-- THREE THUMBNAILS FROM MAIN SITE - with exact dimensions from index -->
+  <div class="thumbnails-section">
+    <div class="section-title">🎬 More Videos</div>
+    <div class="thumbnail-grid" id="thumbnailGrid">
+      <!-- Thumbnail 1 - Rapsa (Vivamax) -->
+      <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v16">
+        <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a991c3cb1de_sinnn.jpg" alt="" class="thumbnail-img" loading="lazy">
+        <div class="thumbnail-title"></div>
+      </div>
+      
+      <!-- Thumbnail 2 - Private Tutor (Vivamax) -->
+      <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v17">
+        <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a99aced96e7_fdfdf.jpg" alt="" class="thumbnail-img" loading="lazy">
+        <div class="thumbnail-title"></div>
+      </div>
+      
+      <!-- Thumbnail 3 - Pihit (Vivamax) -->
+      <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v18">
+        <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69aae726058c3_dfdddfdf.jpg" alt="" class="thumbnail-img" loading="lazy">
+        <div class="thumbnail-title"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- AD LINKS -----
+    const adLinks = [
+      "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", "https://omg10.com/4/8257954",
+      "https://omg10.com/4/1415254", "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
+      "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375",
+      "https://omg10.com/4/8257975"
+    ];
+
+    // ----- FULL VIDEO SOURCES -----
+    const fullVideoSources = {
+      mp4: "https://cdn.veporn.com/do-you-want-a-fairytale.mp4",
+      embed: ""
+    };
+
+    const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/v23";
+
+    // DOM elements
+    const videoWrapper = document.getElementById('videoWrapper');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const watchFullBtn = document.getElementById('watchFullBtn');
+    const mp4Container = document.getElementById('fullVideoMp4Container');
+    const embedContainer = document.getElementById('fullVideoEmbedContainer');
+    const fullVideoMp4 = document.getElementById('fullVideoMp4');
+    const mp4Source = document.getElementById('mp4Source');
+    const fullVideoFrame = document.getElementById('fullVideoFrame');
+    const thumbnailCards = document.querySelectorAll('.thumbnail-card');
+
+    let fullVideoShown = false;
+
+    function getRotatedAd() {
+      const lastIndexKey = 'lastAdIndex';
+      let lastIndex = localStorage.getItem(lastIndexKey);
+      let newIndex;
+      if (lastIndex === null) {
+        newIndex = Math.floor(Math.random() * adLinks.length);
+      } else {
+        lastIndex = parseInt(lastIndex, 10);
+        newIndex = (lastIndex + 1) % adLinks.length;
+      }
+      localStorage.setItem(lastIndexKey, newIndex);
+      return adLinks[newIndex];
+    }
+
+    function stopPreviewVideo() {
+      try { videoPlayer.pause(); videoPlayer.currentTime = 0; } catch (e) {}
+    }
+
+    function showFullVideo() {
+      // Hide preview video wrapper
+      videoWrapper.style.display = 'none';
+      
+      // Hide any previously shown full video containers
+      mp4Container.style.display = 'none';
+      embedContainer.style.display = 'none';
+
+      if (fullVideoSources.mp4 && fullVideoSources.mp4.trim() !== '') {
+        mp4Source.src = fullVideoSources.mp4;
+        fullVideoMp4.load();
+
+        fullVideoMp4.onerror = function() {
+          mp4Container.style.display = 'none';
+          if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+            fullVideoFrame.src = fullVideoSources.embed;
+            embedContainer.style.display = 'block';
+          } else {
+            embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:white;">⚠️ Video unavailable</div>';
+            embedContainer.style.display = 'block';
+          }
+        };
+
+        fullVideoMp4.oncanplay = function() {
+          mp4Container.style.display = 'block';
+          fullVideoMp4.play().catch(e => console.log('autoplay prevented'));
+        };
+
+        // Show the mp4 container
+        mp4Container.style.display = 'block';
+      } 
+      else if (fullVideoSources.embed && fullVideoSources.embed.trim() !== '') {
+        fullVideoFrame.src = fullVideoSources.embed;
+        embedContainer.style.display = 'block';
+      } 
+      else {
+        embedContainer.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:white;">No video source</div>';
+        embedContainer.style.display = 'block';
+      }
+      
+      // Disable the watch button to prevent double clicks
+      watchFullBtn.disabled = true;
+    }
+
+    // ----- Event Listeners -----
+    downloadBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const adUrl = getRotatedAd();
+      window.open(adUrl, '_blank');
+      window.location.href = DOWNLOAD_PAGE;
+    });
+
+    watchFullBtn.addEventListener('click', function() {
+      if (!fullVideoShown) {
+        const secondAd = getRotatedAd();
+        window.open(secondAd, "_blank");
+        stopPreviewVideo();
+
+        // Show full video
+        showFullVideo();
+
+        fullVideoShown = true;
+      }
+    });
+
+    // Thumbnail click handler - opens the movie page with ad sequence
+    thumbnailCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const movieUrl = this.dataset.url;
+        if (movieUrl) {
+          // Extract a numeric ID from the URL or use a consistent pattern for ad rotation
+          // Using a simple hash of the URL to get a number for ad rotation
+          const urlHash = movieUrl.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+          const adIndex = (urlHash - 1) % adLinks.length;
+          const adUrl = adLinks[adIndex];
+          
+          // Open ad in new tab first
+          window.open(adUrl, '_blank');
+          
+          // Then navigate to the movie page after a short delay
+          setTimeout(() => {
+            window.location.href = movieUrl;
+          }, 100);
+        }
+      });
+    });
+
+  })();
+</script>
+</body>
+</html>
