@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Watch Movie Online - Free Streaming</title>
+  <title>Boldilocks Streaming</title>
   <style>
     * {
       margin: 0;
@@ -108,30 +108,32 @@
       white-space: nowrap;
     }
 
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
-      order: 1; /* Ensures Download is first */
-    }
-
-    .btn-primary:hover {
-      background: #3b82f6;
-      transform: scale(1.02);
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
-    }
-
+    /* WATCH FULL VIDEO button (now first) */
     .btn-watch {
       background: #7c3aed; /* Purple */
       color: white;
       box-shadow: 0 6px 14px rgba(124, 58, 237, 0.4);
-      order: 3; /* Ensures Watch Full Video is third */
+      order: 1; /* Ensures Watch is first */
     }
 
     .btn-watch:hover {
       background: #8b5cf6;
       transform: scale(1.02);
       box-shadow: 0 8px 18px rgba(124, 58, 237, 0.6);
+    }
+
+    /* DOWNLOAD button (now third) */
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+      order: 3; /* Ensures Download is third */
+    }
+
+    .btn-primary:hover {
+      background: #3b82f6;
+      transform: scale(1.02);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
     }
 
     .btn-outline {
@@ -225,18 +227,24 @@
       opacity: 1;
     }
 
-    /* Mobile styles - matching main index */
+    /* Mobile styles - matching main index with PROPORTIONAL BUTTONS */
     @media (max-width: 600px) {
       .action-buttons {
         flex-direction: column;
         align-items: center;
-        gap: 12px;
+        gap: 10px; /* Slightly reduced gap */
+        margin-bottom: 20px;
       }
       
+      /* More compact button sizing for mobile */
       .btn-primary, .btn-watch, .btn-outline {
         width: 100%;
-        max-width: 280px;
-        justify-content: center;
+        max-width: 260px; /* Slightly smaller max-width */
+        padding: 10px 20px; /* Reduced padding */
+        font-size: 0.9rem; /* Smaller font */
+        gap: 6px; /* Smaller gap between icon and text */
+        white-space: normal; /* Allow text wrap if needed on very small screens */
+        min-height: 44px; /* Maintain touch-friendly height */
       }
 
       /* On mobile, order doesn't matter as they stack vertically */
@@ -253,7 +261,18 @@
       }
     }
 
+    /* Small mobile - even more compact */
     @media (max-width: 400px) {
+      .action-buttons {
+        gap: 8px;
+      }
+      
+      .btn-primary, .btn-watch, .btn-outline {
+        max-width: 220px; /* Smaller max-width */
+        padding: 8px 16px; /* Even smaller padding */
+        font-size: 0.85rem; /* Smaller font */
+      }
+      
       .thumbnail-img {
         height: 140px; /* Small mobile - matches main index (140px) */
       }
@@ -273,7 +292,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css-all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div class="container">
@@ -306,30 +325,30 @@
     </div>
   </div>
 
-  <!-- ACTION BUTTONS - HOME IS NOW CENTERED BETWEEN DOWNLOAD AND WATCH FULL VIDEO -->
+  <!-- ACTION BUTTONS - ORDER CHANGED: WATCH FULL VIDEO, HOME, DOWNLOAD -->
   <div class="action-buttons">
-    <button class="btn-primary" id="downloadBtn"><i class="fas fa-download"></i> DOWNLOAD</button>
-    <a href="https://www.boldilocks.xyz" class="btn-outline" id="homeBtn" target="_blank"><i class="fas fa-home"></i>HOME</a>
     <button class="btn-watch" id="watchFullBtn"><i class="fas fa-play-circle"></i> WATCH FULL VIDEO</button>
+    <a href="https://www.boldilocks.xyz" class="btn-outline" id="homeBtn" target="_blank"><i class="fas fa-home"></i>HOME</a>
+    <button class="btn-primary" id="downloadBtn"><i class="fas fa-download"></i> DOWNLOAD</button>
   </div>
 
   <!-- THREE THUMBNAILS FROM MAIN SITE - with exact dimensions from index -->
   <div class="thumbnails-section">
     <div class="section-title">🎬 More Videos</div>
     <div class="thumbnail-grid" id="thumbnailGrid">
-      <!-- Thumbnail 1 - Rapsa (Vivamax) -->
+      <!-- Thumbnail 1 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v16">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a991c3cb1de_sinnn.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
       </div>
       
-      <!-- Thumbnail 2 - Private Tutor (Vivamax) -->
+      <!-- Thumbnail 2 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v17">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a99aced96e7_fdfdf.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
       </div>
       
-      <!-- Thumbnail 3 - Pihit (Vivamax) -->
+      <!-- Thumbnail 3 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v18">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69aae726058c3_dfdddfdf.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
@@ -458,7 +477,6 @@
       card.addEventListener('click', function() {
         const movieUrl = this.dataset.url;
         if (movieUrl) {
-          // Extract a numeric ID from the URL or use a consistent pattern for ad rotation
           // Using a simple hash of the URL to get a number for ad rotation
           const urlHash = movieUrl.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           const adIndex = (urlHash - 1) % adLinks.length;
