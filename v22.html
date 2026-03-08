@@ -108,30 +108,32 @@
       white-space: nowrap;
     }
 
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
-      order: 1; /* Ensures Download is first */
-    }
-
-    .btn-primary:hover {
-      background: #3b82f6;
-      transform: scale(1.02);
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
-    }
-
+    /* WATCH FULL VIDEO button (now first) */
     .btn-watch {
       background: #7c3aed; /* Purple */
       color: white;
       box-shadow: 0 6px 14px rgba(124, 58, 237, 0.4);
-      order: 3; /* Ensures Watch Full Video is third */
+      order: 1; /* Ensures Watch is first */
     }
 
     .btn-watch:hover {
       background: #8b5cf6;
       transform: scale(1.02);
       box-shadow: 0 8px 18px rgba(124, 58, 237, 0.6);
+    }
+
+    /* DOWNLOAD button (now third) */
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+      order: 3; /* Ensures Download is third */
+    }
+
+    .btn-primary:hover {
+      background: #3b82f6;
+      transform: scale(1.02);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
     }
 
     .btn-outline {
@@ -323,30 +325,30 @@
     </div>
   </div>
 
-  <!-- ACTION BUTTONS - HOME IS NOW CENTERED BETWEEN DOWNLOAD AND WATCH FULL VIDEO -->
+  <!-- ACTION BUTTONS - ORDER CHANGED: WATCH FULL VIDEO, HOME, DOWNLOAD -->
   <div class="action-buttons">
-    <button class="btn-primary" id="downloadBtn"><i class="fas fa-download"></i> DOWNLOAD</button>
-    <a href="https://www.boldilocks.xyz" class="btn-outline" id="homeBtn" target="_blank"><i class="fas fa-home"></i>HOME</a>
     <button class="btn-watch" id="watchFullBtn"><i class="fas fa-play-circle"></i> WATCH FULL VIDEO</button>
+    <a href="https://www.boldilocks.xyz" class="btn-outline" id="homeBtn" target="_blank"><i class="fas fa-home"></i>HOME</a>
+    <button class="btn-primary" id="downloadBtn"><i class="fas fa-download"></i> DOWNLOAD</button>
   </div>
 
   <!-- THREE THUMBNAILS FROM MAIN SITE - with exact dimensions from index -->
   <div class="thumbnails-section">
     <div class="section-title">🎬 More Videos</div>
     <div class="thumbnail-grid" id="thumbnailGrid">
-      <!-- Thumbnail 1 - Rapsa (Vivamax) -->
+      <!-- Thumbnail 1 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v15">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a98301175b9_Untitleddgd.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
       </div>
       
-      <!-- Thumbnail 2 - Private Tutor (Vivamax) -->
+      <!-- Thumbnail 2 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v14">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a979938aafc_dvdvd.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
       </div>
       
-      <!-- Thumbnail 3 - Pihit (Vivamax) -->
+      <!-- Thumbnail 3 -->
       <div class="thumbnail-card" data-url="https://nswf-hub.github.io/view/v13">
         <img src="https://d1yei2z3i6k35z.cloudfront.net/14259744/69a97072725c7_ddbffn.jpg" alt="" class="thumbnail-img" loading="lazy">
         <div class="thumbnail-title"></div>
@@ -367,7 +369,7 @@
 
     // ----- FULL VIDEO SOURCES -----
     const fullVideoSources = {
-      mp4: "https://s82.bigcdn.cc/pubs/69abd51e15aab5.38845657/720.mp4",
+      mp4: "https://cdn.save.moe/s12/ru3OE6W.mp4",
       embed: ""
     };
 
@@ -475,7 +477,6 @@
       card.addEventListener('click', function() {
         const movieUrl = this.dataset.url;
         if (movieUrl) {
-          // Extract a numeric ID from the URL or use a consistent pattern for ad rotation
           // Using a simple hash of the URL to get a number for ad rotation
           const urlHash = movieUrl.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           const adIndex = (urlHash - 1) % adLinks.length;
