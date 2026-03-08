@@ -225,18 +225,24 @@
       opacity: 1;
     }
 
-    /* Mobile styles - matching main index */
+    /* Mobile styles - matching main index with PROPORTIONAL BUTTONS */
     @media (max-width: 600px) {
       .action-buttons {
         flex-direction: column;
         align-items: center;
-        gap: 12px;
+        gap: 10px; /* Slightly reduced gap */
+        margin-bottom: 20px;
       }
       
+      /* More compact button sizing for mobile */
       .btn-primary, .btn-watch, .btn-outline {
         width: 100%;
-        max-width: 280px;
-        justify-content: center;
+        max-width: 260px; /* Slightly smaller max-width */
+        padding: 10px 20px; /* Reduced padding */
+        font-size: 0.9rem; /* Smaller font */
+        gap: 6px; /* Smaller gap between icon and text */
+        white-space: normal; /* Allow text wrap if needed on very small screens */
+        min-height: 44px; /* Maintain touch-friendly height */
       }
 
       /* On mobile, order doesn't matter as they stack vertically */
@@ -253,7 +259,18 @@
       }
     }
 
+    /* Small mobile - even more compact */
     @media (max-width: 400px) {
+      .action-buttons {
+        gap: 8px;
+      }
+      
+      .btn-primary, .btn-watch, .btn-outline {
+        max-width: 220px; /* Smaller max-width */
+        padding: 8px 16px; /* Even smaller padding */
+        font-size: 0.85rem; /* Smaller font */
+      }
+      
       .thumbnail-img {
         height: 140px; /* Small mobile - matches main index (140px) */
       }
@@ -273,7 +290,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css-all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div class="container">
