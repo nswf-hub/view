@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Simple Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .video-wrapper {
+            width: 100%;
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        .player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .play-button {
+            width: min(80px, 20vw);
+            height: min(80px, 20vw);
+            background: #ff0066;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: min(30px, 8vw);
+            color: white;
+            border: 2px solid white;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 0 30px #ff0066;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 10;
+            /* Better mobile touch */
+            touch-action: manipulation;
+        }
+        
+        .play-button:hover {
+            transform: scale(1.1);
+            background: #ff3388;
+            box-shadow: 0 0 40px #ff3388;
+        }
+        
+        .play-button:active {
+            transform: scale(0.95);
+        }
+        
+        #myVideo {
+            width: 100%;
+            height: 100%;
+            display: none;
+            object-fit: cover;
+            background: #000;
+        }
+        
+        /* Bold thumbnail design */
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(145deg, #1a0033, #33001a, #4d0026);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            flex-direction: column;
+        }
+        
+        /* Animated background effect */
+        .thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 51, 153, 0.3) 0%, transparent 50%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+        
+        .hot-text {
+            font-size: 64px;
+            font-weight: 900;
+            text-shadow: 0 0 30px #ff3399, 0 0 60px #ff0066;
+            letter-spacing: 4px;
+            z-index: 2;
+            animation: flicker 2s linear infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
+            25% { opacity: 0.9; text-shadow: 0 0 40px #ff66aa; }
+            50% { opacity: 1; text-shadow: 0 0 30px #ff0066; }
+            75% { opacity: 0.9; text-shadow: 0 0 50px #ff3388; }
+            100% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
+        }
+        
+        .premium-text {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 12px;
+            margin-top: 10px;
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa00;
+            z-index: 2;
+        }
+        
+        .click-text {
+            font-size: 18px;
+            margin-top: 30px;
+            color: #ff66aa;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border: 1px solid #ff66aa;
+            padding: 8px 24px;
+            border-radius: 50px;
+            background: rgba(255, 102, 170, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 2;
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #ff66aa; }
+            50% { box-shadow: 0 0 20px #ff66aa; }
+            100% { box-shadow: 0 0 10px #ff66aa; }
+        }
+        
+        /* Decorative elements */
+        .glow-ball {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #ff3399, transparent);
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: 0;
+        }
+        
+        .ball1 {
+            top: -30px;
+            right: -30px;
+            animation: move 8s ease-in-out infinite;
+        }
+        
+        .ball2 {
+            bottom: -30px;
+            left: -30px;
+            background: radial-gradient(circle at center, #aa44ff, transparent);
+            animation: move 10s ease-in-out infinite reverse;
+        }
+        
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        /* loading indicator */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: none;
+            z-index: 20;
+        }
+        
+        /* Hide download button in video controls */
+        video::-webkit-media-controls-download-button {
+            display: none !important;
+        }
+        
+        video::-webkit-media-controls-enclosure {
+            overflow: hidden;
+        }
+        
+        video::-webkit-media-controls-panel {
+            width: calc(100% + 30px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-wrapper">
+            <div class="player" id="playerContainer">
+                <!-- Bold thumbnail design -->
+                <div id="thumbnail" class="thumbnail">
+                    <!-- Animated glow balls -->
+                    <div class="glow-ball ball1"></div>
+                    <div class="glow-ball ball2"></div>
+                    
+                    <!-- Text content -->
+                    <div class="hot-text">HOT</div>
+                    <div class="premium-text">PREMIUM</div>
+                    <div class="click-text">CLICK TO WATCH</div>
+                </div>
+                
+                <!-- Your video with mobile optimizations -->
+                <video id="myVideo" controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
+                    <source src="https://cdn.videy.co/8utcL3FQ1.mp4" type="video/mp4">
+                </video>
+                
+                <div id="playButton" class="play-button">
+                    ▶
+                </div>
+                
+                <div id="loading" class="loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const playButton = document.getElementById('playButton');
+        const video = document.getElementById('myVideo');
+        const thumbnail = document.getElementById('thumbnail');
+        const loading = document.getElementById('loading');
+        
+        // ===== YOUR 10 MONETAG LINKS =====
+        const monetagLinks = [
+            "https://omg10.com/4/8251888",
+            "https://omg10.com/4/7512585", 
+            "https://omg10.com/4/8257954",
+            "https://omg10.com/4/1415254", 
+            "https://omg10.com/4/7512545", 
+            "https://omg10.com/4/8198889",
+            "https://omg10.com/4/8236017", 
+            "https://omg10.com/4/8247899", 
+            "https://omg10.com/4/8195375",
+            "https://omg10.com/4/8257975"
+        ];
+        
+        // Function to get or create device ID
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            
+            if (!deviceId) {
+                deviceId = 'device_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('device_id', deviceId);
+            }
+            
+            return deviceId;
+        }
+        
+        // Function to get next ad for this device
+        function getNextAdForDevice() {
+            const deviceId = getDeviceId();
+            const counterKey = 'ad_counter_' + deviceId;
+            let currentIndex = localStorage.getItem(counterKey);
+            
+            if (currentIndex === null) {
+                currentIndex = 0;
+            } else {
+                currentIndex = parseInt(currentIndex);
+            }
+            
+            const adLink = monetagLinks[currentIndex];
+            
+            currentIndex = (currentIndex + 1) % monetagLinks.length;
+            localStorage.setItem(counterKey, currentIndex);
+            
+            return adLink;
+        }
+        
+        // Variable to track if video is playing
+        let videoStarted = false;
+        
+        // Function to handle play button click (works on mobile)
+        function handlePlayClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (!videoStarted) {
+                // Show loading
+                loading.style.display = 'block';
+                
+                // Get next ad for this specific device
+                const adLink = getNextAdForDevice();
+                
+                // Open ad in new tab (mobile friendly)
+                window.open(adLink, '_blank');
+                
+                // Hide play button and thumbnail
+                playButton.style.display = 'none';
+                thumbnail.style.display = 'none';
+                video.style.display = 'block';
+                
+                // Play video with user interaction (required for mobile)
+                const playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        loading.style.display = 'none';
+                        videoStarted = true;
+                    }).catch(error => {
+                        console.log("Play failed:", error);
+                        loading.style.display = 'none';
+                        // If autoplay fails, show video with controls
+                        video.controls = true;
+                        videoStarted = true;
+                    });
+                }
+            }
+        }
+        
+        // Add event listeners for both click and touch
+        playButton.addEventListener('click', handlePlayClick);
+        playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
+        
+        // If user clicks video before it's started
+        video.addEventListener('click', function(e) {
+            if (!videoStarted) {
+                handlePlayClick(e);
+            }
+        });
+        
+        // Handle video end - reset for next view
+        video.addEventListener('ended', function() {
+            videoStarted = false;
+            playButton.style.display = 'flex';
+            thumbnail.style.display = 'flex';
+            video.style.display = 'none';
+            video.controls = true; // Keep controls enabled
+            video.load();
+        });
+        
+        // Handle video error
+        video.addEventListener('error', function() {
+            loading.style.display = 'none';
+            console.log("Video error - check your video URL");
+            // Still show video container even if error
+            playButton.style.display = 'none';
+            thumbnail.style.display = 'none';
+            video.style.display = 'block';
+            video.controls = true;
+        });
+        
+        // Prevents page zoom on double-tap
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Disable right-click on video
+        video.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Force video to load metadata
+        video.load();
+        
+        console.log("Mobile player initialized");
+    </script>
+</body>
+</html>
