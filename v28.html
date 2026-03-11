@@ -45,22 +45,21 @@
         }
         
         .play-button {
-            width: min(80px, 20vw);
-            height: min(80px, 20vw);
+            width: min(60px, 15vw);        /* Reduced from 80px / 20vw */
+            height: min(60px, 15vw);       /* Reduced */
             background: #ff0066;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: min(30px, 8vw);
+            font-size: min(24px, 7vw);     /* Adjusted for smaller button */
             color: white;
             border: 2px solid white;
             transition: transform 0.2s, background 0.2s;
             box-shadow: 0 0 30px #ff0066;
             -webkit-tap-highlight-color: transparent;
             z-index: 10;
-            /* Better mobile touch */
             touch-action: manipulation;
         }
         
@@ -82,7 +81,6 @@
             background: #000;
         }
         
-        /* Bold thumbnail design - with mobile responsive text */
         .thumbnail {
             width: 100%;
             height: 100%;
@@ -100,7 +98,6 @@
             padding: 20px;
         }
         
-        /* Animated background effect */
         .thumbnail::before {
             content: '';
             position: absolute;
@@ -118,9 +115,9 @@
             100% { opacity: 0.3; }
         }
         
-        /* Responsive text sizing */
+        /* Adjusted text sizes for better mobile readability */
         .hot-text {
-            font-size: clamp(32px, 12vw, 64px);
+            font-size: clamp(36px, 14vw, 70px);   /* Increased lower bound */
             font-weight: 900;
             text-shadow: 0 0 30px #ff3399, 0 0 60px #ff0066;
             letter-spacing: 4px;
@@ -138,7 +135,7 @@
         }
         
         .premium-text {
-            font-size: clamp(18px, 6vw, 32px);
+            font-size: clamp(20px, 7vw, 36px);     /* Increased lower bound */
             font-weight: 700;
             letter-spacing: clamp(4px, 2vw, 12px);
             margin-top: 5px;
@@ -148,7 +145,7 @@
         }
         
         .click-text {
-            font-size: clamp(12px, 4vw, 18px);
+            font-size: clamp(14px, 5vw, 22px);     /* Increased min and max */
             margin-top: clamp(15px, 4vw, 30px);
             color: #ff66aa;
             text-transform: uppercase;
@@ -163,17 +160,17 @@
             white-space: nowrap;
         }
         
-        /* Small screen adjustments */
+        /* Additional small screen fine-tuning */
         @media (max-width: 400px) {
             .hot-text {
-                font-size: 28px;
+                font-size: 32px;        /* Slightly larger than before */
             }
             .premium-text {
-                font-size: 16px;
+                font-size: 18px;
                 letter-spacing: 4px;
             }
             .click-text {
-                font-size: 11px;
+                font-size: 13px;         /* Up from 11px */
                 padding: 5px 12px;
             }
         }
@@ -184,7 +181,6 @@
             100% { box-shadow: 0 0 10px #ff66aa; }
         }
         
-        /* Decorative elements */
         .glow-ball {
             position: absolute;
             width: 150px;
@@ -196,7 +192,6 @@
             z-index: 0;
         }
         
-        /* Make glow balls smaller on mobile */
         @media (max-width: 500px) {
             .glow-ball {
                 width: 100px;
@@ -224,7 +219,6 @@
             100% { transform: translate(0, 0); }
         }
         
-        /* loading indicator */
         .loading {
             position: absolute;
             top: 50%;
@@ -239,7 +233,6 @@
             z-index: 20;
         }
         
-        /* Hide download button in video controls */
         video::-webkit-media-controls-download-button {
             display: none !important;
         }
@@ -257,19 +250,15 @@
     <div class="container">
         <div class="video-wrapper">
             <div class="player" id="playerContainer">
-                <!-- Bold thumbnail design with responsive text -->
                 <div id="thumbnail" class="thumbnail">
-                    <!-- Animated glow balls -->
                     <div class="glow-ball ball1"></div>
                     <div class="glow-ball ball2"></div>
                     
-                    <!-- Text content - now responsive -->
                     <div class="hot-text">HOT</div>
                     <div class="premium-text">PREMIUM</div>
                     <div class="click-text">CLICK TO WATCH</div>
                 </div>
                 
-                <!-- Your video with mobile optimizations -->
                 <video id="myVideo" controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
                     <source src="https://cdn.videy.co/8utcL3FQ1.mp4" type="video/mp4">
                 </video>
@@ -304,7 +293,6 @@
             "https://omg10.com/4/8257975"
         ];
         
-        // Function to get or create device ID
         function getDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             
@@ -316,7 +304,6 @@
             return deviceId;
         }
         
-        // Function to get next ad for this device
         function getNextAdForDevice() {
             const deviceId = getDeviceId();
             const counterKey = 'ad_counter_' + deviceId;
@@ -336,30 +323,22 @@
             return adLink;
         }
         
-        // Variable to track if video is playing
         let videoStarted = false;
         
-        // Function to handle play button click (works on mobile)
         function handlePlayClick(e) {
             e.preventDefault();
             e.stopPropagation();
             
             if (!videoStarted) {
-                // Show loading
                 loading.style.display = 'block';
                 
-                // Get next ad for this specific device
                 const adLink = getNextAdForDevice();
-                
-                // Open ad in new tab (mobile friendly)
                 window.open(adLink, '_blank');
                 
-                // Hide play button and thumbnail
                 playButton.style.display = 'none';
                 thumbnail.style.display = 'none';
                 video.style.display = 'block';
                 
-                // Play video with user interaction (required for mobile)
                 const playPromise = video.play();
                 
                 if (playPromise !== undefined) {
@@ -369,7 +348,6 @@
                     }).catch(error => {
                         console.log("Play failed:", error);
                         loading.style.display = 'none';
-                        // If autoplay fails, show video with controls
                         video.controls = true;
                         videoStarted = true;
                     });
@@ -377,51 +355,43 @@
             }
         }
         
-        // Add event listeners for both click and touch
         playButton.addEventListener('click', handlePlayClick);
         playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
         
-        // If user clicks video before it's started
         video.addEventListener('click', function(e) {
             if (!videoStarted) {
                 handlePlayClick(e);
             }
         });
         
-        // Handle video end - reset for next view
         video.addEventListener('ended', function() {
             videoStarted = false;
             playButton.style.display = 'flex';
             thumbnail.style.display = 'flex';
             video.style.display = 'none';
-            video.controls = true; // Keep controls enabled
+            video.controls = true;
             video.load();
         });
         
-        // Handle video error
         video.addEventListener('error', function() {
             loading.style.display = 'none';
             console.log("Video error - check your video URL");
-            // Still show video container even if error
             playButton.style.display = 'none';
             thumbnail.style.display = 'none';
             video.style.display = 'block';
             video.controls = true;
         });
         
-        // Prevents page zoom on double-tap
         document.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
         
-        // Disable right-click on video
         video.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
         
-        // Force video to load metadata
         video.load();
         
         console.log("Mobile player initialized");
