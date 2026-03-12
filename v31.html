@@ -108,14 +108,13 @@
         .player {
             width: 100%;
             aspect-ratio: 16 / 9;
-            background: #000; /* Black background for the player */
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
         
-        /* Fix for play button - always centered */
         .play-button {
             position: absolute;
             top: 50%;
@@ -155,12 +154,11 @@
             width: 100%;
             height: 100%;
             display: none;
-            object-fit: contain; /* Changed from 'cover' to 'contain' - NO CROPPING */
-            background: #000; /* Black background for letterboxing */
+            object-fit: contain;
+            background: #000;
             z-index: 5;
         }
         
-        /* Split thumbnail */
         .thumbnail {
             width: 100%;
             height: 100%;
@@ -182,7 +180,7 @@
         .preview-video {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Also changed for preview - NO CROPPING */
+            object-fit: contain;
             background: #000;
             pointer-events: none;
         }
@@ -284,7 +282,6 @@
             100% { box-shadow: 0 0 10px #ff66aa; }
         }
 
-        /* Video counter indicator */
         .video-counter {
             text-align: center;
             margin-top: 8px;
@@ -295,7 +292,6 @@
             letter-spacing: 1px;
         }
 
-        /* Navigation buttons container */
         .nav-buttons {
             display: flex;
             justify-content: center;
@@ -305,7 +301,6 @@
             padding: 0 10px;
         }
 
-        /* Base button style */
         .nav-button {
             background: linear-gradient(145deg, #2a0033, #1a001f);
             border: 1.5px solid #ff66aa;
@@ -339,7 +334,6 @@
             transform: scale(0.98);
         }
 
-        /* Disabled state */
         .nav-button.disabled {
             opacity: 0.35;
             cursor: not-allowed;
@@ -350,7 +344,6 @@
             pointer-events: none;
         }
 
-        /* Mobile-specific sizing */
         @media (max-width: 480px) {
             .nav-button {
                 font-size: 13px;
@@ -368,7 +361,6 @@
             }
         }
 
-        /* Small phones */
         @media (max-width: 375px) {
             .nav-button {
                 font-size: 12px;
@@ -386,7 +378,6 @@
             .play-button { width: 50px; height: 50px; font-size: 20px; }
         }
 
-        /* Desktop/larger screens */
         @media (min-width: 481px) and (max-width: 768px) {
             .nav-button {
                 font-size: 14px;
@@ -421,7 +412,6 @@
     <div class="container">
         <div class="video-wrapper">
             <div class="player" id="playerContainer">
-                <!-- Split thumbnail (preview video) -->
                 <div id="thumbnail" class="thumbnail">
                     <div class="glow-ball ball1"></div>
                     <div class="glow-ball ball2"></div>
@@ -439,11 +429,9 @@
                     </div>
                 </div>
                 
-                <!-- main video -->
                 <video id="myVideo" controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
                 </video>
                 
-                <!-- big play button (center) – AD on click -->
                 <div id="playButton" class="play-button">
                     ▶
                 </div>
@@ -452,10 +440,8 @@
             </div>
         </div>
 
-        <!-- Video counter indicator -->
         <div id="videoCounter" class="video-counter">Video 1 of 4</div>
 
-        <!-- Navigation buttons - Previous & Next -->
         <div class="nav-buttons">
             <button id="prevButton" class="nav-button">◀ PREVIOUS</button>
             <button id="nextButton" class="nav-button">NEXT ▶</button>
@@ -464,17 +450,15 @@
 
     <script>
         (function() {
-            // ========== YOUR VIDEO LINKS (4 videos) ==========
             const videoSources = [
-                "https://cdn.videy.co/N8baEgxc1.mp4",      // video 1
-                "https://cdn.videy.co/h9mjcJ961.mp4",      // video 2 (your new video)
-                "https://cdn.videy.co/bmTbBjJC1.mp4",      // video 3 (replace)
-                "https://cdn.videy.co/Id9tJAgI1.mp4"       // video 4 (replace)
+                "https://cdn.videy.co/N8baEgxc1.mp4",
+                "https://cdn.videy.co/h9mjcJ961.mp4",
+                "https://cdn.videy.co/bmTbBjJC1.mp4",
+                "https://cdn.videy.co/Id9tJAgI1.mp4"
             ];
 
             const TOTAL_VIDEOS = videoSources.length;
 
-            // ========== YOUR 10 MONETAG LINKS ==========
             const monetagLinks = [
                 "https://omg10.com/4/8251888",
                 "https://omg10.com/4/7512585", 
@@ -488,7 +472,6 @@
                 "https://omg10.com/4/8257975"
             ];
 
-            // ----- DOM elements -----
             const playButton = document.getElementById('playButton');
             const prevButton = document.getElementById('prevButton');
             const nextButton = document.getElementById('nextButton');
@@ -498,11 +481,11 @@
             const loading = document.getElementById('loading');
             const previewVideo = document.getElementById('previewVideo');
 
-            // ----- state -----
             let videoStarted = false;
             let currentVideoIndex = 0;
+            let adShown = false;
+            let previewShown = false;
 
-            // ----- device ID & round‑robin for monetag -----
             function getDeviceId() {
                 let deviceId = localStorage.getItem('device_id');
                 if (!deviceId) {
@@ -530,13 +513,11 @@
                 return adLink;
             }
 
-            // ----- Update UI based on current video index -----
             function updateVideoCounter() {
                 videoCounter.textContent = `Video ${currentVideoIndex + 1} of ${TOTAL_VIDEOS}`;
             }
 
             function updateNavButtonsState() {
-                // Previous button - disabled at first video
                 if (currentVideoIndex === 0) {
                     prevButton.classList.add('disabled');
                     prevButton.disabled = true;
@@ -545,7 +526,6 @@
                     prevButton.disabled = false;
                 }
                 
-                // Next button - disabled at last video
                 if (currentVideoIndex === TOTAL_VIDEOS - 1) {
                     nextButton.classList.add('disabled');
                     nextButton.disabled = true;
@@ -555,7 +535,6 @@
                 }
             }
 
-            // ----- load video source by index -----
             function setMainVideoSource(index) {
                 while (video.firstChild) {
                     video.removeChild(video.firstChild);
@@ -566,21 +545,28 @@
                 video.appendChild(source);
                 video.load();
                 
-                // Update counter and button states
                 updateVideoCounter();
                 updateNavButtonsState();
+                
+                adShown = false;
+                
+                if (previewShown) {
+                    showVideoWithPlayButton();
+                } else {
+                    showThumbnailMode();
+                }
             }
 
-            // initial load
             currentVideoIndex = 0;
             setMainVideoSource(currentVideoIndex);
 
-            // ----- UI modes -----
             function showThumbnailMode() {
                 playButton.style.display = 'flex';
                 thumbnail.style.display = 'flex';
                 video.style.display = 'none';
                 videoStarted = false;
+                video.pause();
+                
                 previewVideo.play().catch(() => {});
             }
 
@@ -592,38 +578,65 @@
                 videoStarted = false;
             }
 
-            // ----- HANDLE PLAY BUTTON – AD + play -----
+            // Remove the restrictive event listeners that might be blocking playback
+            video.addEventListener('play', function(e) {
+                // Allow playback if videoStarted is true OR if we're in the process of starting
+                if (!videoStarted && !adShown) {
+                    e.preventDefault();
+                    video.pause();
+                    return false;
+                }
+            });
+
             function handlePlayClick(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 loading.style.display = 'block';
-                
-                // OPEN AD
-                const adLink = getNextAdForDevice();
-                window.open(adLink, '_blank');
 
+                // Mark that preview has been shown
+                previewShown = true;
+                
+                // Hide UI elements
                 playButton.style.display = 'none';
                 thumbnail.style.display = 'none';
                 video.style.display = 'block';
-
-                const playPromise = video.play();
                 
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        loading.style.display = 'none';
-                        videoStarted = true;
-                    }).catch(error => {
-                        console.log("Play failed:", error);
-                        loading.style.display = 'none';
-                        video.controls = true;
-                        videoStarted = true;
-                        playButton.style.display = 'flex';
-                    });
+                // Open ad in new tab
+                if (!adShown) {
+                    const adLink = getNextAdForDevice();
+                    window.open(adLink, '_blank');
+                    adShown = true;
                 }
+
+                // Use a small timeout to ensure the ad opens first, then play video
+                setTimeout(() => {
+                    // Set videoStarted to true BEFORE attempting to play
+                    videoStarted = true;
+                    
+                    const playPromise = video.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            loading.style.display = 'none';
+                            console.log('Video playing successfully');
+                        }).catch(error => {
+                            console.log("Play failed:", error);
+                            loading.style.display = 'none';
+                            // If autoplay fails, show controls but keep videoStarted true
+                            video.controls = true;
+                            // Try one more time with user interaction simulated
+                            video.play().catch(e => {
+                                console.log('Second play attempt failed:', e);
+                                // If still fails, show play button as fallback
+                                playButton.style.display = 'flex';
+                                videoStarted = false;
+                            });
+                        });
+                    }
+                }, 100); // Small delay to ensure ad opens first
             }
 
-            // ----- HANDLE PREVIOUS BUTTON -----
             function handlePrevClick(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -632,7 +645,6 @@
 
                 currentVideoIndex--;
                 setMainVideoSource(currentVideoIndex);
-                showVideoWithPlayButton();
                 
                 loading.style.display = 'block';
                 setTimeout(() => {
@@ -640,7 +652,6 @@
                 }, 500);
             }
 
-            // ----- HANDLE NEXT BUTTON -----
             function handleNextClick(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -649,7 +660,6 @@
 
                 currentVideoIndex++;
                 setMainVideoSource(currentVideoIndex);
-                showVideoWithPlayButton();
                 
                 loading.style.display = 'block';
                 setTimeout(() => {
@@ -657,7 +667,6 @@
                 }, 500);
             }
 
-            // ----- EVENT LISTENERS -----
             playButton.addEventListener('click', handlePlayClick);
             playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
 
@@ -676,6 +685,7 @@
                 loading.style.display = 'none';
                 video.controls = true;
                 playButton.style.display = 'flex';
+                videoStarted = false;
             });
 
             document.addEventListener('touchstart', (e) => {
