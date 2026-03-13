@@ -361,8 +361,8 @@
                     </div>
                 </div>
                 
-                <!-- Main video with object-fit contain to avoid cropping -->
-                <video id="myVideo" controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
+                <!-- Main video with object-fit contain to avoid cropping and muted for autoplay -->
+                <video id="myVideo" muted controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
                     <source src="https://zpi.cx/s12/fY96C.mp4" type="video/mp4">
                 </video>
                 
@@ -427,42 +427,56 @@
         function handlePlayClick(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (!videoStarted) {
                 loading.style.display = 'block';
                 
-                const adLink = getNextAdForDevice();
-                window.open(adLink, '_blank');
-                
+                // Hide overlay and show video
                 playButton.style.display = 'none';
                 thumbnail.style.display = 'none';
                 video.style.display = 'block';
                 
+                // Ensure video is muted for autoplay (already muted in HTML, but double‑check)
+                video.muted = true;
+
+                // Attempt to play (will succeed because muted)
                 const playPromise = video.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
+
+                playPromise
+                    .then(() => {
+                        // Playback started! Now unmute after a short delay
+                        setTimeout(() => {
+                            video.muted = false;
+                        }, 100);
                         loading.style.display = 'none';
                         videoStarted = true;
-                    }).catch(error => {
-                        console.log("Play failed:", error);
+
+                        // Open ad after playback is confirmed
+                        const adLink = getNextAdForDevice();
+                        window.open(adLink, '_blank');
+                    })
+                    .catch(error => {
+                        console.log('Play failed:', error);
                         loading.style.display = 'none';
+                        // Still show controls so user can play manually
                         video.controls = true;
                         videoStarted = true;
+
+                        // Open ad anyway
+                        const adLink = getNextAdForDevice();
+                        window.open(adLink, '_blank');
                     });
-                }
             }
         }
-        
+
+        // Attach event listeners
         playButton.addEventListener('click', handlePlayClick);
         playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
-        
         video.addEventListener('click', function(e) {
-            if (!videoStarted) {
-                handlePlayClick(e);
-            }
+            if (!videoStarted) handlePlayClick(e);
         });
-        
+
+        // Reset when video ends
         video.addEventListener('ended', function() {
             videoStarted = false;
             playButton.style.display = 'flex';
@@ -471,26 +485,22 @@
             video.controls = true;
             video.load();
         });
-        
+
         video.addEventListener('error', function() {
             loading.style.display = 'none';
-            console.log("Video error - check your video URL");
+            console.log('Video error - check URL');
             playButton.style.display = 'none';
             thumbnail.style.display = 'none';
             video.style.display = 'block';
             video.controls = true;
         });
-        
+
+        // Prevent pinch zoom (optional)
         document.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
-        
-        video.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        
+
+        video.addEventListener('contextmenu', e => e.preventDefault());
         video.load();
         console.log("Video now uses object-fit:contain — full view, no cropping, black bars if needed.");
     </script>
