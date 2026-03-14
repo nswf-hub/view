@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Watch Video · Dual Source</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: radial-gradient(circle at 20% 30%, #1a0033, #000 90%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="8" cy="8" r="1" fill="rgba(255,200,200,0.1)"/><circle cx="32" cy="15" r="2" fill="rgba(200,100,255,0.1)"/></svg>');
+            opacity: 0.4;
+            animation: float 30s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            from { transform: translateY(0) translateX(0); }
+            to { transform: translateY(-20px) translateX(5px); }
+        }
+        
+        .bg-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(255, 51, 153, 0.15), transparent 70%);
+            filter: blur(60px);
+            z-index: 0;
+            animation: orbMove 15s ease-in-out infinite alternate;
+        }
+        
+        .orb1 {
+            top: 5%;
+            left: 0%;
+            background: radial-gradient(circle at center, rgba(255, 100, 150, 0.2), transparent);
+        }
+        
+        .orb2 {
+            bottom: 5%;
+            right: 0%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at center, rgba(170, 68, 255, 0.15), transparent);
+            animation-duration: 25s;
+        }
+        
+        @media (max-width: 600px) {
+            .bg-orb {
+                width: 200px;
+                height: 200px;
+                filter: blur(40px);
+                opacity: 0.6;
+            }
+            .orb2 {
+                width: 250px;
+                height: 250px;
+            }
+        }
+        
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, -15px) scale(1.05); }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .video-wrapper {
+            width: 100%;
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px 16px 0 0;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        
+        .player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .play-button {
+            width: min(60px, 15vw);
+            height: min(60px, 15vw);
+            min-width: 44px;
+            min-height: 44px;
+            background: #ff0066;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: min(24px, 7vw);
+            color: white;
+            border: 2px solid white;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 0 30px #ff0066;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 20;
+            touch-action: manipulation;
+        }
+        
+        .play-button:hover {
+            transform: scale(1.1);
+            background: #ff3388;
+            box-shadow: 0 0 40px #ff3388;
+        }
+        
+        .play-button:active {
+            transform: scale(0.95);
+        }
+        
+        #myVideo {
+            width: 100%;
+            height: 100%;
+            display: none;
+            object-fit: contain;
+            background-color: #000;
+            z-index: 5;
+        }
+        
+        #fallbackIframe {
+            width: 100%;
+            height: 100%;
+            display: none;
+            border: none;
+            background: #000;
+            z-index: 5;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            display: flex;
+            background: linear-gradient(145deg, #1a0033, #33001a, #4d0026);
+        }
+        
+        .preview-half {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            border-right: 2px solid rgba(255,255,255,0.2);
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+            pointer-events: none;
+        }
+        
+        .text-half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            position: relative;
+            z-index: 2;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        
+        .glow-ball {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #ff3399, transparent);
+            filter: blur(40px);
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .ball1 {
+            top: -30px;
+            right: -30px;
+            animation: move 8s ease-in-out infinite;
+        }
+        
+        .ball2 {
+            bottom: -30px;
+            left: -30px;
+            background: radial-gradient(circle at center, #aa44ff, transparent);
+            animation: move 10s ease-in-out infinite reverse;
+        }
+        
+        @media (max-width: 500px) {
+            .glow-ball {
+                width: 100px;
+                height: 100px;
+                filter: blur(30px);
+            }
+        }
+        
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(15px, 15px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        .hot-text {
+            font-size: clamp(32px, 12vw, 70px);
+            font-weight: 900;
+            text-shadow: 0 0 30px #ff3399, 0 0 60px #ff0066;
+            letter-spacing: 4px;
+            animation: flicker 2s linear infinite;
+            line-height: 1.2;
+            z-index: 2;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
+            25% { opacity: 0.9; text-shadow: 0 0 40px #ff66aa; }
+            50% { opacity: 1; text-shadow: 0 0 30px #ff0066; }
+            75% { opacity: 0.9; text-shadow: 0 0 50px #ff3388; }
+            100% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
+        }
+        
+        .premium-text {
+            font-size: clamp(18px, 6vw, 36px);
+            font-weight: 700;
+            letter-spacing: clamp(4px, 2vw, 12px);
+            margin-top: 5px;
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa00;
+            z-index: 2;
+        }
+        
+        .click-text {
+            font-size: clamp(12px, 4.5vw, 22px);
+            margin-top: clamp(12px, 4vw, 30px);
+            color: #ff66aa;
+            text-transform: uppercase;
+            letter-spacing: clamp(2px, 1.5vw, 4px);
+            border: 1px solid #ff66aa;
+            padding: clamp(5px, 2vw, 8px) clamp(12px, 4vw, 24px);
+            border-radius: 50px;
+            background: rgba(255, 102, 170, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            animation: glow 2s ease-in-out infinite;
+            white-space: nowrap;
+            z-index: 2;
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #ff66aa; }
+            50% { box-shadow: 0 0 20px #ff66aa; }
+            100% { box-shadow: 0 0 10px #ff66aa; }
+        }
+        
+        @media (max-width: 375px) {
+            .hot-text {
+                font-size: 28px;
+            }
+            .premium-text {
+                font-size: 16px;
+            }
+            .click-text {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+            .play-button {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: none;
+            z-index: 30;
+        }
+        
+        video::-webkit-media-controls-download-button {
+            display: none !important;
+        }
+        
+        video::-webkit-media-controls-enclosure {
+            overflow: hidden;
+        }
+        
+        video::-webkit-media-controls-panel {
+            width: calc(100% + 30px);
+        }
+
+        .download-area {
+            width: 100%;
+            background: rgba(10, 5, 15, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 102, 170, 0.3);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            z-index: 5;
+            position: relative;
+        }
+        
+        .download-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .download-text span {
+            background: #ff3399;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: black;
+            text-transform: uppercase;
+        }
+        
+        .download-btn {
+            background: linear-gradient(145deg, #ff0066, #b30049);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 8px 22px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 15px #ff0066, 0 4px 8px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+            touch-action: manipulation;
+            text-decoration: none;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+            min-width: 130px;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        
+        .download-btn:active {
+            transform: scale(0.96);
+            background: linear-gradient(145deg, #cc0055, #990040);
+            box-shadow: 0 0 25px #ff66aa;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(145deg, #ff3388, #cc0055);
+            box-shadow: 0 0 30px #ff80b3;
+        }
+        
+        .download-icon {
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 4px white);
+        }
+
+        @media (max-width: 450px) {
+            .download-area {
+                padding: 8px 12px;
+            }
+            .download-text {
+                font-size: 0.8rem;
+            }
+            .download-text span {
+                padding: 2px 6px;
+                font-size: 0.65rem;
+            }
+            .download-btn {
+                font-size: 0.9rem;
+                padding: 6px 16px;
+                min-width: 115px;
+                gap: 4px;
+            }
+            .download-icon {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .download-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .download-text {
+                justify-content: center;
+                margin-bottom: 2px;
+            }
+            .download-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+
+    <div class="container">
+        <div class="video-wrapper">
+            <div class="player" id="playerContainer">
+                <!-- Split thumbnail -->
+                <div id="thumbnail" class="thumbnail">
+                    <div class="glow-ball ball1"></div>
+                    <div class="glow-ball ball2"></div>
+                    
+                    <div class="preview-half">
+                        <video class="preview-video" muted autoplay loop playsinline preload="auto">
+                            <source src="https://cdn.videy.co/ljSrRngY1.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    
+                    <div class="text-half">
+                        <div class="hot-text">HOT</div>
+                        <div class="premium-text">PREMIUM</div>
+                        <div class="click-text">CLICK TO WATCH</div>
+                    </div>
+                </div>
+                
+                <!-- Primary: MP4 video (placeholder src - replace with actual MP4 URL when available) -->
+                <video id="myVideo" muted controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
+                    <source src="" type="video/mp4">
+                </video>
+                
+                <!-- Fallback: iframe embed (used when MP4 fails) -->
+                <iframe id="fallbackIframe" src="" allowfullscreen allow="autoplay; fullscreen; encrypted-media" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                
+                <div id="playButton" class="play-button">
+                    ▶
+                </div>
+                
+                <div id="loading" class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Download button section -->
+        <div class="download-area">
+            <div class="download-text">
+                <span>HD</span> Full video
+            </div>
+            <button class="download-btn" id="downloadBtn">
+                <span class="download-icon">⬇️</span> DOWNLOAD
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const playButton = document.getElementById('playButton');
+        const video = document.getElementById('myVideo');
+        const fallbackIframe = document.getElementById('fallbackIframe');
+        const thumbnail = document.getElementById('thumbnail');
+        const loading = document.getElementById('loading');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        // ===== YOUR 9 MONETAG LINKS =====
+        const monetagLinks = [
+            "https://omg10.com/4/8251888",
+            "https://omg10.com/4/7512585", 
+            "https://omg10.com/4/8257954",
+            "https://omg10.com/4/1415254", 
+            "https://omg10.com/4/7512545", 
+            "https://omg10.com/4/8198889",
+            "https://omg10.com/4/8236017", 
+            "https://omg10.com/4/8247899", 
+            "https://omg10.com/4/8195375"
+        ];
+        
+        // DOWNLOAD PAGE (open in same tab)
+        const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/n7";
+        
+        // ----- VIDEO SOURCES -----
+        // MP4 source - REPLACE THIS WITH YOUR ACTUAL MP4 URL WHEN AVAILABLE
+        // Leave empty for now to use embed, or put a test URL to try MP4 first
+        const MP4_SOURCE = ""; // Put your MP4 URL here when available e.g., "https://example.com/video.mp4"
+        
+        // Embed source (fallback when MP4 fails or is empty)
+        const EMBED_SRC = "https://sendvid.com/embed/b0tura79";
+        
+        // Alternative embed formats if needed:
+        // const EMBED_SRC = "https://sendvid.com/b0tura79"; // Direct video page
+        
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'device_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+        
+        function getNextAdForDevice() {
+            const deviceId = getDeviceId();
+            const counterKey = 'ad_counter_' + deviceId;
+            let currentIndex = localStorage.getItem(counterKey);
+            
+            if (currentIndex === null) {
+                currentIndex = 0;
+            } else {
+                currentIndex = parseInt(currentIndex);
+            }
+            
+            const adLink = monetagLinks[currentIndex];
+            currentIndex = (currentIndex + 1) % monetagLinks.length;
+            localStorage.setItem(counterKey, currentIndex);
+            
+            return adLink;
+        }
+        
+        let videoStarted = false;
+        let fallbackActive = false;
+        let mp4Attempted = false;
+        
+        // Set video source if MP4_SOURCE is not empty
+        if (MP4_SOURCE) {
+            video.src = MP4_SOURCE;
+            video.load();
+            console.log("MP4 source loaded:", MP4_SOURCE);
+        } else {
+            console.log("MP4 source is empty, will use embed fallback");
+        }
+        
+        // Function to attempt MP4 playback
+        function attemptPlayMP4() {
+            return new Promise((resolve, reject) => {
+                // Check if MP4 source is available
+                if (!MP4_SOURCE) {
+                    console.log("No MP4 source available, switching to embed");
+                    switchToIframe();
+                    reject('No MP4 source');
+                    return;
+                }
+                
+                // Hide iframe, show video
+                fallbackIframe.style.display = 'none';
+                video.style.display = 'block';
+                video.muted = true; // Required for autoplay
+                
+                // Make sure source is set
+                if (!video.src || video.src === '') {
+                    video.src = MP4_SOURCE;
+                    video.load();
+                }
+                
+                console.log("Attempting to play MP4...");
+                const playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("MP4 playing successfully");
+                        videoStarted = true;
+                        fallbackActive = false;
+                        mp4Attempted = true;
+                        
+                        // Unmute after a short delay
+                        setTimeout(() => { 
+                            video.muted = false; 
+                        }, 500);
+                        
+                        resolve();
+                    }).catch(error => {
+                        console.log("MP4 play failed:", error);
+                        mp4Attempted = true;
+                        // MP4 failed - try iframe
+                        switchToIframe();
+                        reject(error);
+                    });
+                } else {
+                    mp4Attempted = true;
+                    switchToIframe();
+                    reject('Play promise undefined');
+                }
+            });
+        }
+        
+        function switchToIframe() {
+            console.log("Activating iframe fallback");
+            video.pause();
+            video.style.display = 'none';
+            
+            // Clear any existing iframe src and set new one with autoplay
+            fallbackIframe.src = '';
+            
+            // Construct iframe URL with autoplay
+            let iframeSrc = EMBED_SRC;
+            
+            // Add autoplay parameter if not already present
+            if (iframeSrc.indexOf('?') > -1) {
+                if (iframeSrc.indexOf('autoplay=') === -1) {
+                    iframeSrc += '&autoplay=1';
+                }
+            } else {
+                iframeSrc += '?autoplay=1';
+            }
+            
+            // Additional parameters for better compatibility
+            if (iframeSrc.includes('youtube') || iframeSrc.includes('youtu.be')) {
+                iframeSrc += '&enablejsapi=1&rel=0';
+            }
+            
+            fallbackIframe.src = iframeSrc;
+            fallbackIframe.style.display = 'block';
+            
+            fallbackActive = true;
+            videoStarted = true;
+            loading.style.display = 'none';
+            
+            console.log("Iframe activated with src:", iframeSrc);
+        }
+        
+        function handlePlayClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!videoStarted) {
+                loading.style.display = 'block';
+                playButton.style.display = 'none';
+                thumbnail.style.display = 'none';
+                
+                // Try MP4 first, then fallback to embed if needed
+                attemptPlayMP4()
+                    .then(() => {
+                        // MP4 success
+                        loading.style.display = 'none';
+                        console.log("MP4 playback started");
+                        // Open ad in new tab
+                        const adLink = getNextAdForDevice();
+                        window.open(adLink, '_blank');
+                    })
+                    .catch(() => {
+                        // MP4 failed - switchToIframe is called, but we need to hide loading and open ad
+                        loading.style.display = 'none';
+                        console.log("Using embed fallback");
+                        const adLink = getNextAdForDevice();
+                        window.open(adLink, '_blank');
+                    });
+            }
+        }
+
+        // Event listeners
+        playButton.addEventListener('click', handlePlayClick);
+        playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
+        
+        // Also allow clicking on video to play if not started
+        video.addEventListener('click', function(e) {
+            if (!videoStarted) {
+                handlePlayClick(e);
+            }
+        });
+        
+        // Video error handling
+        video.addEventListener('error', function(e) {
+            console.log("Video error occurred:", e);
+            if (!videoStarted && !mp4Attempted) {
+                // If error before play, switch to iframe
+                loading.style.display = 'none';
+                switchToIframe();
+            }
+        });
+        
+        // If video stalls
+        video.addEventListener('stalled', function() {
+            console.log("Video stalled");
+            if (!videoStarted && !mp4Attempted) {
+                switchToIframe();
+            }
+        });
+        
+        // When video can play through
+        video.addEventListener('canplaythrough', function() {
+            console.log("Video can play through");
+        });
+        
+        // If iframe fails to load
+        fallbackIframe.addEventListener('error', function() {
+            console.log("Iframe failed to load");
+            loading.style.display = 'none';
+        });
+        
+        // If iframe loads successfully
+        fallbackIframe.addEventListener('load', function() {
+            console.log("Iframe loaded successfully");
+            loading.style.display = 'none';
+        });
+        
+        // Reset when video ends
+        video.addEventListener('ended', function() {
+            console.log("Video ended");
+            resetPlayer();
+        });
+        
+        // Function to reset player to initial state
+        function resetPlayer() {
+            videoStarted = false;
+            fallbackActive = false;
+            mp4Attempted = false;
+            playButton.style.display = 'flex';
+            thumbnail.style.display = 'flex';
+            video.style.display = 'none';
+            fallbackIframe.style.display = 'none';
+            fallbackIframe.src = ''; // Clear iframe src
+            video.controls = true;
+        }
+        
+        // Prevent multiple touch events
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        
+        // Disable right-click on video
+        video.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // ========= DOWNLOAD BUTTON =========
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const adLink = getNextAdForDevice();
+            window.open(adLink, '_blank');
+            
+            setTimeout(() => {
+                window.location.href = DOWNLOAD_PAGE;
+            }, 50);
+        });
+
+        downloadBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const adLink = getNextAdForDevice();
+            window.open(adLink, '_blank');
+            setTimeout(() => {
+                window.location.href = DOWNLOAD_PAGE;
+            }, 50);
+        }, { passive: false });
+
+        console.log("Dual source ready:");
+        console.log("- MP4 source:", MP4_SOURCE || "EMPTY (will use embed)");
+        console.log("- Embed source:", EMBED_SRC);
+        console.log("Will try MP4 first, fallback to embed if MP4 fails");
+    </script>
+</body>
+</html>
