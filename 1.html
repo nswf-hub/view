@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Simple Video · Gallery</title>
+
+<style>
+/* black background, pink/white text (#ff00a8), no borders anywhere */
+* {
+    box-sizing: border-box;
+}
+
+body{
+background:#000000;
+font-family:Arial, sans-serif;
+margin:0;
+padding:10px;
+color:#ffffff;
+}
+
+/* HOME MENU BAR - above everything - MOBILE RESPONSIVE */
+.menu-bar{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:space-between;
+padding:10px 0 15px 0;
+margin-bottom:15px;
+border-bottom:2px solid #ff00a8;
+gap:10px;
+}
+
+/* Image logo - responsive */
+.logo-img{
+height:50px;
+width:auto;
+cursor:pointer;
+display:block;
+}
+
+/* Mobile menu links - responsive */
+.menu-links{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+}
+
+.menu-links a{
+color:#ffffff;
+text-decoration:none;
+font-size:14px;
+padding:5px 0;
+transition:color 0.2s;
+cursor:pointer;
+white-space:nowrap;
+}
+
+@media (min-width: 768px) {
+    .menu-links a {
+        font-size:16px;
+        gap:25px;
+    }
+    .logo-img {
+        height:60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-links {
+        gap:8px;
+    }
+    .menu-links a {
+        font-size:13px;
+    }
+    .logo-img {
+        height:45px;
+    }
+}
+
+.menu-links a:hover{
+color:#ff00a8;
+}
+
+.menu-links a.active{
+color:#ff00a8;
+border-bottom:2px solid #ff00a8;
+}
+
+/* player initially hidden - only appears when video plays */
+#player{
+display:none;
+margin:15px 0 25px 0;
+text-align:center;
+padding:15px;
+background:#111111;
+border-radius:8px;
+}
+
+#player video{
+width:100%;
+max-width:900px;
+background:#000000;
+display:block;
+margin:0 auto;
+border-radius:4px;
+}
+
+/* DOWNLOAD BUTTON - below video player - mobile friendly */
+.download-btn{
+display:inline-block;
+margin-top:15px;
+padding:12px 25px;
+background:#ff00a8;
+color:#ffffff;
+text-decoration:none;
+font-size:16px;
+font-weight:bold;
+border:none;
+cursor:pointer;
+transition:background 0.2s;
+width:auto;
+min-width:200px;
+border-radius:4px;
+-webkit-tap-highlight-color: transparent;
+}
+
+.download-btn:hover{
+background:#cc0085;
+}
+
+/* Grid - fully responsive */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+gap:15px;
+justify-content:center;
+max-width:1200px;
+margin:0 auto;
+margin-top:15px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+        gap:20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));
+        gap:10px;
+    }
+}
+
+.card{
+width:100%;
+cursor:pointer;
+transition:transform 0.1s;
+-webkit-tap-highlight-color: transparent;
+}
+
+.card:hover{
+transform:scale(1.02);
+}
+
+.card:active{
+transform:scale(0.98);
+}
+
+.thumb{
+position:relative;
+overflow:hidden;
+border-radius:4px;
+}
+
+.thumb video{
+width:100%;
+height:auto;
+aspect-ratio:16/9;
+object-fit:cover;
+display:block;
+background:#000;
+border-radius:4px;
+}
+
+.title{
+font-size:13px;
+margin-top:6px;
+color:#ffffff;
+text-align:center;
+word-break:break-word;
+padding:0 2px;
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size:12px;
+    }
+}
+
+/* simple scrollbar - mobile friendly */
+::-webkit-scrollbar {
+width:5px;
+background:#111111;
+}
+::-webkit-scrollbar-thumb {
+background:#ff00a8;
+border-radius:0;
+}
+
+/* Touch optimization */
+@media (max-width: 768px) {
+    .download-btn {
+        padding:14px 25px; /* Larger touch target */
+        font-size:16px;
+    }
+    
+    .menu-links a {
+        padding:8px 0; /* Larger touch target */
+    }
+    
+    .logo-img {
+        padding:5px 0;
+    }
+}
+
+/* Prevent text selection on buttons */
+.download-btn, .menu-links a, .card {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME MENU BAR - with larger image logo -->
+<div class="menu-bar">
+<!-- Image logo -->
+<img src="https://zpi.cx/b/uiDMr.png" alt="VIDSTREAM" class="logo-img" onclick="goHome()">
+
+<div class="menu-links">
+<a href="#" onclick="goHome(); return false;" class="active" id="homeLink">Home</a>
+<a href="#" onclick="handleMenuClick('trending'); return false;">Trending</a>
+<a href="#" onclick="handleMenuClick('latest'); return false;">Latest</a>
+<a href="#" onclick="handleMenuClick('categories'); return false;">Categories</a>
+<a href="#" onclick="handleMenuClick('favorites'); return false;">Favorites</a>
+</div>
+</div>
+
+<!-- PLAYER - HIDDEN INITIALLY -->
+<div id="player">
+<video id="mainVideo" controls controlslist="nodownload noremoteplayback" disablepictureinpicture playsinline webkit-playsinline>
+<source src="" type="video/mp4">
+</video>
+<!-- DOWNLOAD BUTTON - will open ad first then go to video-specific download page -->
+<a href="#" id="downloadBtn" class="download-btn" onclick="handleDownloadClick(event); return false;">⬇ DOWNLOAD VIDEO</a>
+</div>
+
+<div class="grid" id="videoGrid">
+
+<!-- VIDEO 1 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'HOT DANCE', 'https://nswf-hub.github.io/download/n1')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">HOT DANCE</div>
+</div>
+
+<!-- VIDEO 2 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'TRENDING', 'https://nswf-hub.github.io/download/n2')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">TRENDING</div>
+</div>
+
+<!-- VIDEO 3 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VIRAL CLIP', 'https://nswf-hub.github.io/download/n3')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">VIRAL CLIP</div>
+</div>
+
+<!-- VIDEO 4 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'MIDNIGHT', 'https://nswf-hub.github.io/download/n4')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">MIDNIGHT</div>
+</div>
+
+<!-- VIDEO 5 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CHERRY', 'https://nswf-hub.github.io/download/n5')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">CHERRY</div>
+</div>
+
+<!-- VIDEO 6 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'NEON', 'https://nswf-hub.github.io/download/n6')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">NEON</div>
+</div>
+
+<!-- VIDEO 7 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'PURPLE', 'https://nswf-hub.github.io/download/n7')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">PURPLE</div>
+</div>
+
+<!-- VIDEO 8 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VELVET', 'https://nswf-hub.github.io/download/n8')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">VELVET</div>
+</div>
+
+<!-- VIDEO 9 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CRIMSON', 'https://nswf-hub.github.io/download/n9')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">CRIMSON</div>
+</div>
+
+<!-- VIDEO 10 -->
+<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'BLAZE', 'https://nswf-hub.github.io/download/n10')">
+<div class="thumb">
+<video muted loop preload="metadata" playsinline webkit-playsinline
+onmouseover="this.play()"
+onmouseout="this.pause();this.currentTime=0;"
+ontouchstart="this.play()"
+ontouchend="this.pause();this.currentTime=0;">
+<source src="https://zpi.cx/s4/2EeZajd.mp4" type="video/mp4">
+</video>
+</div>
+<div class="title">BLAZE</div>
+</div>
+
+</div>
+
+<script>
+
+// ========== YOUR 9 AD LINKS ==========
+const adLinks = [
+    "https://omg10.com/4/8251888",
+    "https://omg10.com/4/7512585", 
+    "https://omg10.com/4/8257954",
+    "https://omg10.com/4/1415254", 
+    "https://omg10.com/4/7512545", 
+    "https://omg10.com/4/8198889",
+    "https://omg10.com/4/8236017", 
+    "https://omg10.com/4/8247899", 
+    "https://omg10.com/4/8195375"
+];
+
+// Ad rotation counter (stored in localStorage to persist across sessions)
+let adCounter = localStorage.getItem('adCounter') ? parseInt(localStorage.getItem('adCounter')) : 0;
+
+// Function to get next ad in rotation
+function getNextAdLink() {
+    const adLink = adLinks[adCounter % adLinks.length];
+    adCounter = (adCounter + 1) % adLinks.length;
+    localStorage.setItem('adCounter', adCounter);
+    return adLink;
+}
+
+// Function to open ad
+function openAd() {
+    const adLink = getNextAdLink();
+    window.open(adLink, '_blank');
+}
+
+let currentVideoUrl = '';
+let currentVideoTitle = '';
+let currentDownloadLink = ''; // Store the download link for current video
+
+// ONLY disable right-click menu on videos, nothing else
+document.addEventListener('contextmenu', function(e) {
+    // Check if the click is on a video element
+    if (e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+        return false;
+    }
+    // Allow right-click on other elements
+});
+
+function handleThumbnailClick(videoUrl, videoTitle, downloadLink){
+
+    // Save current video info
+    currentVideoUrl = videoUrl;
+    currentVideoTitle = videoTitle;
+    currentDownloadLink = downloadLink;
+
+    // Open ad in new tab (using rotation)
+    openAd();
+
+    // Show the player (it was hidden)
+    document.getElementById("player").style.display = "block";
+
+    // Update player video
+    let video = document.getElementById("mainVideo");
+    video.src = videoUrl;
+    video.play();
+
+    // Scroll smoothly to player
+    window.scrollTo({
+        top:document.getElementById("player").offsetTop - 10,
+        behavior:"smooth"
+    });
+
+}
+
+// Handle download button click - opens ad first, then goes to video-specific download page
+function handleDownloadClick(event) {
+    // Open ad using rotation
+    openAd();
+    
+    // Small delay to ensure ad opens, then go to the specific download page for this video
+    setTimeout(() => {
+        if (currentDownloadLink) {
+            window.location.href = currentDownloadLink;
+        } else {
+            alert('No download link available for this video');
+        }
+    }, 100);
+    
+    return false;
+}
+
+// GO HOME FUNCTION - closes player and returns to home view
+function goHome() {
+    // Hide the player
+    document.getElementById("player").style.display = "none";
+    
+    // Stop video playback
+    let video = document.getElementById("mainVideo");
+    video.pause();
+    video.src = ''; // Clear source
+    
+    // Scroll back to top
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    // Update active menu item
+    document.querySelectorAll('.menu-links a').forEach(link => {
+        link.classList.remove('active');
+    });
+    document.getElementById('homeLink').classList.add('active');
+}
+
+// Handle other menu clicks (for demo purposes)
+function handleMenuClick(menu) {
+    // Just show a message or you can implement actual functionality
+    alert(menu.charAt(0).toUpperCase() + menu.slice(1) + ' page - add your content here');
+    
+    // Update active menu
+    document.querySelectorAll('.menu-links a').forEach(link => {
+        link.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+// reset video previews when mouse leaves (for desktop)
+// and handle touch events separately
+document.querySelectorAll('.card video').forEach(video => {
+    video.addEventListener('mouseleave', function() {
+        this.pause();
+        this.currentTime = 0;
+    });
+});
+
+</script>
+
+</body>
+</html>
