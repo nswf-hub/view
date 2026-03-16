@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,54 +15,59 @@ body{
 background:#000000;
 font-family:Arial, sans-serif;
 margin:0;
-padding:10px;
+padding:20px;
 color:#ffffff;
 }
 
-/* HOME MENU BAR - above everything - MOBILE RESPONSIVE */
+/* HOME MENU BAR - centered for PC view */
 .menu-bar{
 display:flex;
 flex-wrap:wrap;
 align-items:center;
-justify-content:space-between;
-padding:10px 0 15px 0;
-margin-bottom:15px;
+justify-content:center;
+padding:15px 0 20px 0;
+margin-bottom:20px;
 border-bottom:2px solid #ff00a8;
-gap:10px;
+gap:40px;
 }
 
-/* Image logo - responsive */
+/* Image logo - bigger for PC */
 .logo-img{
-height:50px;
+height:70px;
 width:auto;
 cursor:pointer;
 display:block;
 }
 
-/* Mobile menu links - responsive */
+/* Menu links - centered */
 .menu-links{
 display:flex;
 flex-wrap:wrap;
-gap:12px;
+gap:30px;
 }
 
 .menu-links a{
 color:#ffffff;
 text-decoration:none;
-font-size:14px;
+font-size:18px;
 padding:5px 0;
 transition:color 0.2s;
 cursor:pointer;
 white-space:nowrap;
 }
 
-@media (min-width: 768px) {
-    .menu-links a {
-        font-size:16px;
-        gap:25px;
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .menu-bar {
+        justify-content:space-between;
+        gap:10px;
     }
     .logo-img {
-        height:60px;
+        height:50px;
+    }
+    .menu-links a {
+        font-size:14px;
+        gap:12px;
     }
 }
 
@@ -88,40 +92,41 @@ color:#ff00a8;
 border-bottom:2px solid #ff00a8;
 }
 
-/* player initially hidden - only appears when video plays */
+/* player section */
 #player{
 display:none;
-margin:15px 0 25px 0;
+margin:20px 0 30px 0;
 text-align:center;
-padding:15px;
+padding:20px;
 background:#111111;
 border-radius:8px;
+width:100%;
 }
 
 #player video{
 width:100%;
-max-width:900px;
+max-width:1000px;
 background:#000000;
 display:block;
 margin:0 auto;
 border-radius:4px;
 }
 
-/* DOWNLOAD BUTTON - below video player - mobile friendly */
+/* DOWNLOAD BUTTON */
 .download-btn{
 display:inline-block;
-margin-top:15px;
-padding:12px 25px;
+margin-top:20px;
+padding:15px 40px;
 background:#ff00a8;
 color:#ffffff;
 text-decoration:none;
-font-size:16px;
+font-size:18px;
 font-weight:bold;
 border:none;
 cursor:pointer;
 transition:background 0.2s;
 width:auto;
-min-width:200px;
+min-width:220px;
 border-radius:4px;
 -webkit-tap-highlight-color: transparent;
 }
@@ -130,28 +135,28 @@ border-radius:4px;
 background:#cc0085;
 }
 
-/* Grid - fully responsive */
+/* Grid - larger thumbnails for PC */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
-gap:15px;
+grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+gap:25px;
 justify-content:center;
-max-width:1200px;
+max-width:1400px;
 margin:0 auto;
-margin-top:15px;
+margin-top:20px;
 }
 
 @media (min-width: 768px) {
     .grid {
-        grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
-        gap:20px;
+        grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+        gap:30px;
     }
 }
 
 @media (max-width: 480px) {
     .grid {
-        grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));
-        gap:10px;
+        grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+        gap:12px;
     }
 }
 
@@ -170,10 +175,15 @@ transform:scale(1.02);
 transform:scale(0.98);
 }
 
+/* Class to hide the currently playing video's card */
+.card.playing {
+    display: none;
+}
+
 .thumb{
 position:relative;
 overflow:hidden;
-border-radius:4px;
+border-radius:6px;
 }
 
 .thumb video{
@@ -183,12 +193,12 @@ aspect-ratio:16/9;
 object-fit:cover;
 display:block;
 background:#000;
-border-radius:4px;
+border-radius:6px;
 }
 
 .title{
-font-size:13px;
-margin-top:6px;
+font-size:15px;
+margin-top:8px;
 color:#ffffff;
 text-align:center;
 word-break:break-word;
@@ -201,9 +211,9 @@ padding:0 2px;
     }
 }
 
-/* simple scrollbar - mobile friendly */
+/* simple scrollbar */
 ::-webkit-scrollbar {
-width:5px;
+width:8px;
 background:#111111;
 }
 ::-webkit-scrollbar-thumb {
@@ -214,20 +224,16 @@ border-radius:0;
 /* Touch optimization */
 @media (max-width: 768px) {
     .download-btn {
-        padding:14px 25px; /* Larger touch target */
+        padding:14px 25px;
         font-size:16px;
     }
     
     .menu-links a {
-        padding:8px 0; /* Larger touch target */
-    }
-    
-    .logo-img {
-        padding:5px 0;
+        padding:8px 0;
     }
 }
 
-/* Prevent text selection on buttons */
+/* Prevent text selection */
 .download-btn, .menu-links a, .card {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -239,7 +245,7 @@ border-radius:0;
 
 <body>
 
-<!-- HOME MENU BAR - with larger image logo -->
+<!-- HOME MENU BAR - centered for PC view -->
 <div class="menu-bar">
 <!-- Image logo -->
 <img src="https://zpi.cx/b/uiDMr.png" alt="VIDSTREAM" class="logo-img" onclick="goHome()">
@@ -258,14 +264,15 @@ border-radius:0;
 <video id="mainVideo" controls controlslist="nodownload noremoteplayback" disablepictureinpicture playsinline webkit-playsinline>
 <source src="" type="video/mp4">
 </video>
-<!-- DOWNLOAD BUTTON - will open ad first then go to video-specific download page -->
+<!-- DOWNLOAD BUTTON -->
 <a href="#" id="downloadBtn" class="download-btn" onclick="handleDownloadClick(event); return false;">⬇ DOWNLOAD VIDEO</a>
 </div>
 
+<!-- THUMBNAIL GRID - ALL VIDEOS -->
 <div class="grid" id="videoGrid">
 
 <!-- VIDEO 1 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'HOT DANCE', 'https://nswf-hub.github.io/download/n1')">
+<div class="card" id="card1" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'HOT DANCE', 'https://nswf-hub.github.io/download/n1', 'card1')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -279,7 +286,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 2 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'TRENDING', 'https://nswf-hub.github.io/download/n2')">
+<div class="card" id="card2" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'TRENDING', 'https://nswf-hub.github.io/download/n2', 'card2')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -293,7 +300,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 3 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VIRAL CLIP', 'https://nswf-hub.github.io/download/n3')">
+<div class="card" id="card3" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VIRAL CLIP', 'https://nswf-hub.github.io/download/n3', 'card3')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -307,7 +314,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 4 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'MIDNIGHT', 'https://nswf-hub.github.io/download/n4')">
+<div class="card" id="card4" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'MIDNIGHT', 'https://nswf-hub.github.io/download/n4', 'card4')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -321,7 +328,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 5 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CHERRY', 'https://nswf-hub.github.io/download/n5')">
+<div class="card" id="card5" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CHERRY', 'https://nswf-hub.github.io/download/n5', 'card5')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -335,7 +342,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 6 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'NEON', 'https://nswf-hub.github.io/download/n6')">
+<div class="card" id="card6" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'NEON', 'https://nswf-hub.github.io/download/n6', 'card6')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -349,7 +356,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 7 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'PURPLE', 'https://nswf-hub.github.io/download/n7')">
+<div class="card" id="card7" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'PURPLE', 'https://nswf-hub.github.io/download/n7', 'card7')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -363,7 +370,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 8 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VELVET', 'https://nswf-hub.github.io/download/n8')">
+<div class="card" id="card8" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'VELVET', 'https://nswf-hub.github.io/download/n8', 'card8')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -377,7 +384,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 9 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CRIMSON', 'https://nswf-hub.github.io/download/n9')">
+<div class="card" id="card9" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'CRIMSON', 'https://nswf-hub.github.io/download/n9', 'card9')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -391,7 +398,7 @@ ontouchend="this.pause();this.currentTime=0;">
 </div>
 
 <!-- VIDEO 10 -->
-<div class="card" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'BLAZE', 'https://nswf-hub.github.io/download/n10')">
+<div class="card" id="card10" onclick="handleThumbnailClick('https://zpi.cx/s4/2EeZajd.mp4', 'BLAZE', 'https://nswf-hub.github.io/download/n10', 'card10')">
 <div class="thumb">
 <video muted loop preload="metadata" playsinline webkit-playsinline
 onmouseover="this.play()"
@@ -421,7 +428,7 @@ const adLinks = [
     "https://omg10.com/4/8195375"
 ];
 
-// Ad rotation counter (stored in localStorage to persist across sessions)
+// Ad rotation counter
 let adCounter = localStorage.getItem('adCounter') ? parseInt(localStorage.getItem('adCounter')) : 0;
 
 // Function to get next ad in rotation
@@ -440,29 +447,43 @@ function openAd() {
 
 let currentVideoUrl = '';
 let currentVideoTitle = '';
-let currentDownloadLink = ''; // Store the download link for current video
+let currentDownloadLink = '';
+let currentCardId = ''; // Store which card is playing
 
-// ONLY disable right-click menu on videos, nothing else
+// Disable right-click on videos only
 document.addEventListener('contextmenu', function(e) {
-    // Check if the click is on a video element
     if (e.target.tagName === 'VIDEO') {
         e.preventDefault();
         return false;
     }
-    // Allow right-click on other elements
 });
 
-function handleThumbnailClick(videoUrl, videoTitle, downloadLink){
+function handleThumbnailClick(videoUrl, videoTitle, downloadLink, cardId){
+
+    // If there was a previously playing video, show its card again
+    if (currentCardId) {
+        const previousCard = document.getElementById(currentCardId);
+        if (previousCard) {
+            previousCard.classList.remove('playing');
+        }
+    }
 
     // Save current video info
     currentVideoUrl = videoUrl;
     currentVideoTitle = videoTitle;
     currentDownloadLink = downloadLink;
+    currentCardId = cardId;
 
-    // Open ad in new tab (using rotation)
+    // Hide the clicked card
+    const currentCard = document.getElementById(cardId);
+    if (currentCard) {
+        currentCard.classList.add('playing');
+    }
+
+    // Open ad
     openAd();
 
-    // Show the player (it was hidden)
+    // Show the player
     document.getElementById("player").style.display = "block";
 
     // Update player video
@@ -470,7 +491,7 @@ function handleThumbnailClick(videoUrl, videoTitle, downloadLink){
     video.src = videoUrl;
     video.play();
 
-    // Scroll smoothly to player
+    // Scroll to player
     window.scrollTo({
         top:document.getElementById("player").offsetTop - 10,
         behavior:"smooth"
@@ -478,60 +499,63 @@ function handleThumbnailClick(videoUrl, videoTitle, downloadLink){
 
 }
 
-// Handle download button click - opens ad first, then goes to video-specific download page
+// Handle download button click
 function handleDownloadClick(event) {
-    // Open ad using rotation
     openAd();
     
-    // Small delay to ensure ad opens, then go to the specific download page for this video
     setTimeout(() => {
         if (currentDownloadLink) {
             window.location.href = currentDownloadLink;
         } else {
-            alert('No download link available for this video');
+            alert('No download link available');
         }
     }, 100);
     
     return false;
 }
 
-// GO HOME FUNCTION - closes player and returns to home view
+// GO HOME FUNCTION - shows all thumbnails again
 function goHome() {
     // Hide the player
     document.getElementById("player").style.display = "none";
     
+    // Show all cards by removing 'playing' class from all
+    document.querySelectorAll('.card').forEach(card => {
+        card.classList.remove('playing');
+    });
+    
+    // Clear current card ID
+    currentCardId = '';
+    
     // Stop video playback
     let video = document.getElementById("mainVideo");
     video.pause();
-    video.src = ''; // Clear source
+    video.src = '';
     
-    // Scroll back to top
+    // Scroll to top
     window.scrollTo({
         top:0,
         behavior:"smooth"
     });
 
-    // Update active menu item
+    // Update active menu
     document.querySelectorAll('.menu-links a').forEach(link => {
         link.classList.remove('active');
     });
     document.getElementById('homeLink').classList.add('active');
 }
 
-// Handle other menu clicks (for demo purposes)
+// Handle other menu clicks
 function handleMenuClick(menu) {
-    // Just show a message or you can implement actual functionality
     alert(menu.charAt(0).toUpperCase() + menu.slice(1) + ' page - add your content here');
     
-    // Update active menu
     document.querySelectorAll('.menu-links a').forEach(link => {
         link.classList.remove('active');
     });
     event.target.classList.add('active');
 }
 
-// reset video previews when mouse leaves (for desktop)
-// and handle touch events separately
+// Reset video previews
 document.querySelectorAll('.card video').forEach(video => {
     video.addEventListener('mouseleave', function() {
         this.pause();
