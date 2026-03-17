@@ -3,25 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Video Gallery · Centered Layout</title>
+<title>Video Gallery · Mobile Search</title>
 
 <style>
 body{
 background:#000000;
 font-family:Arial,sans-serif;
-padding:20px;
+padding:10px;
 color:#ffffff;
 margin:0;
 display:flex;
 justify-content:center;
 }
 
-/* Main container - centers everything */
+/* Main container */
 .main-container{
 max-width:1200px;
 width:100%;
 margin:0 auto;
-padding:0 20px;
+padding:0 15px;
+position:relative;
 }
 
 /* Menu bar styles */
@@ -29,28 +30,30 @@ padding:0 20px;
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:15px 0 20px 0;
+padding:10px 0 15px 0;
 border-bottom:2px solid #ff00a8;
-margin-bottom:20px;
+margin-bottom:15px;
 position:relative;
+min-height:60px;
 }
 
 .logo-img{
-height:60px;
+height:50px;
 cursor:pointer;
+z-index:5;
 }
 
 /* Desktop menu links */
 .menu-links{
 display:flex;
-gap:30px;
-margin:0 30px;
+gap:25px;
+margin:0 20px;
 }
 
 .menu-links a{
 color:#ffffff;
 text-decoration:none;
-font-size:16px;
+font-size:15px;
 cursor:pointer;
 white-space:nowrap;
 }
@@ -59,21 +62,23 @@ white-space:nowrap;
 color:#ff00a8;
 }
 
-/* Search container */
+/* Search container - desktop */
 .search-container{
 display:flex;
 align-items:center;
+position:relative;
 }
 
 #searchInput{
-padding:8px 15px;
+padding:7px 12px;
 border-radius:20px;
 border:2px solid #ff00a8;
 background:#222;
 color:white;
 font-size:13px;
-width:160px;
+width:150px;
 outline:none;
+transition:all 0.3s ease;
 }
 
 #searchInput::placeholder{
@@ -86,17 +91,79 @@ background:#ff00a8;
 color:white;
 border:none;
 border-radius:20px;
-padding:8px 15px;
+padding:7px 12px;
 margin-left:5px;
 cursor:pointer;
 font-weight:bold;
 font-size:13px;
 }
 
+/* Mobile search icon */
+.mobile-search-icon{
+display:none;
+background:#ff00a8;
+color:white;
+border:none;
+border-radius:50%;
+width:36px;
+height:36px;
+font-size:18px;
+cursor:pointer;
+align-items:center;
+justify-content:center;
+position:absolute;
+right:5px;
+top:50%;
+transform:translateY(-50%);
+z-index:15;
+}
+
+/* Mobile search container (hidden by default) */
+.mobile-search-container{
+display:none;
+position:absolute;
+top:70px;
+left:10px;
+right:10px;
+background:#111111;
+padding:10px;
+border-radius:10px;
+border:2px solid #ff00a8;
+z-index:100;
+box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.mobile-search-container.show{
+display:flex;
+}
+
+.mobile-search-input{
+flex:1;
+padding:12px;
+border-radius:25px 0 0 25px;
+border:2px solid #ff00a8;
+border-right:none;
+background:#222;
+color:white;
+font-size:14px;
+outline:none;
+}
+
+.mobile-search-btn{
+background:#ff00a8;
+color:white;
+border:none;
+border-radius:0 25px 25px 0;
+padding:12px 20px;
+cursor:pointer;
+font-weight:bold;
+font-size:14px;
+}
+
 /* Hamburger icon */
 .hamburger{
 display:none;
-font-size:30px;
+font-size:28px;
 color:#ff00a8;
 cursor:pointer;
 position:absolute;
@@ -109,46 +176,37 @@ z-index:10;
 /* Mobile styles */
 @media (max-width: 768px) {
     .main-container{
-        padding:0 10px;
+        padding:0 5px;
     }
     
     .menu-bar{
         flex-wrap:wrap;
-        justify-content:flex-start;
-        padding:15px 0 5px 0;
-        min-height:70px;
+        padding:10px 0 5px 0;
+        min-height:50px;
     }
     
     .hamburger{
         display:block;
         left:5px;
+        font-size:26px;
     }
     
     .logo-img{
-        height:45px;
-        margin:0 auto;
+        height:40px;
         position:absolute;
         left:50%;
         transform:translateX(-50%);
+        margin:0;
     }
     
+    /* Hide desktop search on mobile */
     .search-container{
-        order:3;
-        width:100%;
-        justify-content:flex-end;
-        margin:15px 0 5px 0;
-        padding-right:5px;
+        display:none;
     }
     
-    #searchInput{
-        width:140px;
-        padding:6px 10px;
-        font-size:12px;
-    }
-    
-    #searchBtn{
-        padding:6px 12px;
-        font-size:12px;
+    /* Show mobile search icon */
+    .mobile-search-icon{
+        display:flex;
     }
     
     .menu-links{
@@ -156,19 +214,20 @@ z-index:10;
         position:fixed;
         top:0;
         left:0;
-        width:250px;
+        width:240px;
         height:100vh;
         background:#111111;
         flex-direction:column;
-        padding:80px 20px 20px;
+        padding:70px 15px 20px;
         z-index:100;
         border-right:2px solid #ff00a8;
         margin:0;
-        gap:20px;
+        gap:15px;
     }
     
     .menu-links a{
-        font-size:18px;
+        font-size:16px;
+        padding:8px 0;
     }
     
     .menu-links.show{
@@ -192,85 +251,115 @@ z-index:10;
 }
 
 @media (max-width: 480px) {
-    #searchInput{
-        width:120px;
+    .logo-img{
+        height:35px;
+    }
+    
+    .hamburger{
+        font-size:24px;
+    }
+    
+    .mobile-search-icon{
+        width:32px;
+        height:32px;
+        font-size:16px;
+    }
+    
+    .mobile-search-container{
+        top:65px;
     }
 }
 
 #player{
 display:none;
-margin:20px 0;
+margin:15px 0;
 text-align:center;
 }
 
 /* Tags container */
 .tags-container{
-margin-bottom:15px;
+margin-bottom:12px;
 display:flex;
 flex-wrap:wrap;
-gap:10px;
+gap:8px;
 justify-content:center;
 }
 
 .tag{
 background:#ff00a8;
 color:#ffffff;
-padding:8px 18px;
-border-radius:30px;
-font-size:14px;
+padding:6px 14px;
+border-radius:25px;
+font-size:13px;
 font-weight:bold;
 letter-spacing:0.5px;
 text-transform:uppercase;
-box-shadow:0 2px 5px rgba(255,0,168,0.3);
 }
 
 #player video{
 width:100%;
 max-width:900px;
+border-radius:6px;
 }
 
 .download-btn{
 display:inline-block;
-margin-top:15px;
-padding:12px 30px;
+margin-top:12px;
+padding:10px 25px;
 background:#ff00a8;
 color:white;
 text-decoration:none;
 border-radius:4px;
+font-size:14px;
+font-weight:bold;
 }
 
-/* Grid - exactly 4 columns on desktop */
+/* Grid - responsive with 2 on mobile */
 .grid{
 display:grid;
 grid-template-columns:repeat(4, 1fr);
-gap:25px;
+gap:20px;
 margin-top:20px;
 }
 
-/* Responsive grid */
+/* Tablet */
 @media (max-width: 1000px) {
     .grid{
         grid-template-columns:repeat(3, 1fr);
+        gap:15px;
     }
 }
 
+/* Mobile - 2 columns */
 @media (max-width: 768px) {
     .grid{
         grid-template-columns:repeat(2, 1fr);
-        gap:15px;
+        gap:12px;
+        margin-top:15px;
     }
 }
 
+/* Small mobile - still 2 columns but smaller gap */
 @media (max-width: 480px) {
     .grid{
-        grid-template-columns:repeat(1, 1fr);
-        gap:15px;
+        grid-template-columns:repeat(2, 1fr);
+        gap:8px;
+    }
+    
+    .title{
+        font-size:12px;
+        margin-top:4px;
     }
 }
 
 .card{
 cursor:pointer;
 width:100%;
+transition:transform 0.1s;
+}
+
+.card:hover{
+transform:scale(1.02);
 }
 
 .thumb{
@@ -290,9 +379,13 @@ display:block;
 
 .title{
 text-align:center;
-margin-top:8px;
-font-size:14px;
+margin-top:6px;
+font-size:13px;
 font-weight:bold;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+padding:0 2px;
 }
 
 .card.playing{
@@ -301,14 +394,17 @@ display:none;
 
 .no-results{
 text-align:center;
-padding:40px;
+padding:30px;
 color:#ff00a8;
-font-size:18px;
+font-size:16px;
 grid-column:1/-1;
 }
 
 @media (max-width:600px){
-.tag{padding:6px 12px;font-size:12px;}
+.tag{
+padding:5px 10px;
+font-size:12px;
+}
 }
 </style>
 </head>
@@ -325,18 +421,27 @@ grid-column:1/-1;
 <!-- Logo -->
 <img src="https://zpi.cx/b/uiDMr.png" class="logo-img" onclick="goHome()">
 
-<!-- Menu links -->
+<!-- Menu links (desktop) -->
 <div class="menu-links" id="menuLinks">
 <a href="#" onclick="goHome(); closeMenu(); return false;">Home</a>
 <a href="#" onclick="handleMenuClick('trending'); closeMenu(); return false;">Trending</a>
 <a href="#" onclick="handleMenuClick('latest'); closeMenu(); return false;">Latest</a>
 </div>
 
-<!-- Search bar -->
+<!-- Desktop search bar -->
 <div class="search-container">
 <input type="text" id="searchInput" placeholder="Search...">
 <button id="searchBtn" onclick="searchVideos()">🔍</button>
 </div>
+
+<!-- Mobile search icon -->
+<button class="mobile-search-icon" onclick="toggleMobileSearch()">🔍</button>
+</div>
+
+<!-- Mobile search bar (hidden by default) -->
+<div class="mobile-search-container" id="mobileSearchContainer">
+<input type="text" id="mobileSearchInput" class="mobile-search-input" placeholder="Search titles or tags...">
+<button class="mobile-search-btn" onclick="mobileSearch()">Search</button>
 </div>
 
 <div id="player">
@@ -356,7 +461,7 @@ const adLinks = [
     "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", "https://omg10.com/4/8195375"
 ];
 
-// ===== VIDEOS LIST WITH TAGS =====
+// ===== VIDEOS LIST =====
 const videos = [
     {title:"HOT DANCE", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n1", seekTime: 5, tags: ["wife", "sexy", "dance"]},
     {title:"TRENDING", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n2", seekTime: 12, tags: ["blonde", "hot", "trending"]},
@@ -386,6 +491,21 @@ function closeMenu(){
     document.getElementById('menuOverlay').classList.remove('show');
 }
 
+function toggleMobileSearch(){
+    let container = document.getElementById('mobileSearchContainer');
+    container.classList.toggle('show');
+    if(container.classList.contains('show')){
+        document.getElementById('mobileSearchInput').focus();
+    }
+}
+
+function mobileSearch(){
+    let searchTerm = document.getElementById('mobileSearchInput').value;
+    document.getElementById('searchInput').value = searchTerm;
+    searchVideos();
+    document.getElementById('mobileSearchContainer').classList.remove('show');
+}
+
 function getNextAd(){
     let link = adLinks[adCounter % adLinks.length];
     adCounter = (Number(adCounter) + 1) % adLinks.length;
@@ -393,11 +513,9 @@ function getNextAd(){
     return link;
 }
 
-// Function to display tags for current video
 function displayTags(tags){
     let container = document.getElementById('tagsContainer');
     container.innerHTML = '';
-    
     if(tags && tags.length > 0){
         tags.forEach(tag => {
             let tagSpan = document.createElement('span');
@@ -408,7 +526,6 @@ function displayTags(tags){
     }
 }
 
-// Search function
 function searchVideos(){
     let searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     let grid = document.getElementById('videoGrid');
@@ -440,7 +557,6 @@ function searchVideos(){
     }
 }
 
-// Create video card
 function createVideoCard(video, index){
     let card = document.createElement('div');
     card.className = 'card';
@@ -486,11 +602,9 @@ function createVideoCard(video, index){
     return card;
 }
 
-// Create all thumbnails
 function createThumbnails(){
     let grid = document.getElementById('videoGrid');
     grid.innerHTML = '';
-    
     videos.forEach((video, index) => {
         grid.appendChild(createVideoCard(video, index));
     });
@@ -538,6 +652,8 @@ function goHome(){
     }
     
     document.getElementById('searchInput').value = '';
+    document.getElementById('mobileSearchInput').value = '';
+    document.getElementById('mobileSearchContainer').classList.remove('show');
     createThumbnails();
     window.scrollTo({top:0, behavior:'smooth'});
     closeMenu();
@@ -550,6 +666,12 @@ function handleMenuClick(menu){
 document.getElementById('searchInput').addEventListener('keypress', function(e){
     if(e.key === 'Enter'){
         searchVideos();
+    }
+});
+
+document.getElementById('mobileSearchInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter'){
+        mobileSearch();
     }
 });
 
