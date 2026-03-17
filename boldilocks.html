@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Video Gallery · Search</title>
+<title>Video Gallery · Centered Layout</title>
 
 <style>
 body{
@@ -12,6 +12,16 @@ font-family:Arial,sans-serif;
 padding:20px;
 color:#ffffff;
 margin:0;
+display:flex;
+justify-content:center;
+}
+
+/* Main container - centers everything */
+.main-container{
+max-width:1200px;
+width:100%;
+margin:0 auto;
+padding:0 20px;
 }
 
 /* Menu bar styles */
@@ -28,15 +38,13 @@ position:relative;
 .logo-img{
 height:60px;
 cursor:pointer;
-margin-right:30px;
 }
 
 /* Desktop menu links */
 .menu-links{
 display:flex;
-gap:25px;
-margin-right:auto;
-margin-left:20px;
+gap:30px;
+margin:0 30px;
 }
 
 .menu-links a{
@@ -44,6 +52,7 @@ color:#ffffff;
 text-decoration:none;
 font-size:16px;
 cursor:pointer;
+white-space:nowrap;
 }
 
 .menu-links a:hover{
@@ -54,11 +63,10 @@ color:#ff00a8;
 .search-container{
 display:flex;
 align-items:center;
-justify-content:flex-end;
 }
 
 #searchInput{
-padding:8px 12px;
+padding:8px 15px;
 border-radius:20px;
 border:2px solid #ff00a8;
 background:#222;
@@ -100,6 +108,10 @@ z-index:10;
 
 /* Mobile styles */
 @media (max-width: 768px) {
+    .main-container{
+        padding:0 10px;
+    }
+    
     .menu-bar{
         flex-wrap:wrap;
         justify-content:flex-start;
@@ -152,6 +164,11 @@ z-index:10;
         z-index:100;
         border-right:2px solid #ff00a8;
         margin:0;
+        gap:20px;
+    }
+    
+    .menu-links a{
+        font-size:18px;
     }
     
     .menu-links.show{
@@ -177,10 +194,6 @@ z-index:10;
 @media (max-width: 480px) {
     #searchInput{
         width:120px;
-    }
-    
-    .search-container{
-        padding-right:2px;
     }
 }
 
@@ -226,15 +239,38 @@ text-decoration:none;
 border-radius:4px;
 }
 
+/* Grid - exactly 4 columns on desktop */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-gap:20px;
+grid-template-columns:repeat(4, 1fr);
+gap:25px;
 margin-top:20px;
+}
+
+/* Responsive grid */
+@media (max-width: 1000px) {
+    .grid{
+        grid-template-columns:repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid{
+        grid-template-columns:repeat(2, 1fr);
+        gap:15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid{
+        grid-template-columns:repeat(1, 1fr);
+        gap:15px;
+    }
 }
 
 .card{
 cursor:pointer;
+width:100%;
 }
 
 .thumb{
@@ -242,19 +278,21 @@ position:relative;
 overflow:hidden;
 border-radius:6px;
 background:#111;
+aspect-ratio:16/9;
 }
 
 .thumb video{
 width:100%;
-aspect-ratio:16/9;
+height:100%;
 object-fit:cover;
 display:block;
 }
 
 .title{
 text-align:center;
-margin-top:5px;
+margin-top:8px;
 font-size:14px;
+font-weight:bold;
 }
 
 .card.playing{
@@ -276,7 +314,7 @@ grid-column:1/-1;
 </head>
 
 <body>
-
+<div class="main-container">
 <!-- Menu overlay for mobile -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
@@ -284,7 +322,7 @@ grid-column:1/-1;
 <!-- Hamburger icon for mobile -->
 <div class="hamburger" onclick="toggleMenu()">☰</div>
 
-<!-- Logo - click to go home -->
+<!-- Logo -->
 <img src="https://zpi.cx/b/uiDMr.png" class="logo-img" onclick="goHome()">
 
 <!-- Menu links -->
@@ -309,6 +347,7 @@ grid-column:1/-1;
 </div>
 
 <div class="grid" id="videoGrid"></div>
+</div>
 
 <script>
 const adLinks = [
@@ -328,7 +367,9 @@ const videos = [
     {title:"PURPLE", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n7", seekTime: 10, tags: ["purple", "wife", "dress"]},
     {title:"VELVET", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n8", seekTime: 7, tags: ["velvet", "blonde", "luxury"]},
     {title:"CRIMSON", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n9", seekTime: 18, tags: ["crimson", "sexy", "red"]},
-    {title:"BLAZE", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n10", seekTime: 25, tags: ["blaze", "hot", "wife"]}
+    {title:"BLAZE", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n10", seekTime: 25, tags: ["blaze", "hot", "wife"]},
+    {title:"DANCE", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n1", seekTime: 5, tags: ["wife", "sexy", "dance"]},
+    {title:"HOT", url:"https://zpi.cx/s4/2EeZajd.mp4", download:"https://nswf-hub.github.io/download/n2", seekTime: 12, tags: ["blonde", "hot", "trending"]}
 ];
 
 let adCounter = localStorage.getItem('adCounter') || 0;
@@ -355,7 +396,7 @@ function getNextAd(){
 // Function to display tags for current video
 function displayTags(tags){
     let container = document.getElementById('tagsContainer');
-    container.innerHTML = ''; // Clear previous tags
+    container.innerHTML = '';
     
     if(tags && tags.length > 0){
         tags.forEach(tag => {
@@ -367,14 +408,13 @@ function displayTags(tags){
     }
 }
 
-// Search function - filters by title OR tags
+// Search function
 function searchVideos(){
     let searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
     let grid = document.getElementById('videoGrid');
     grid.innerHTML = '';
     
     if(searchTerm === ''){
-        // If search is empty, show all videos
         videos.forEach((video, index) => {
             grid.appendChild(createVideoCard(video, index));
         });
@@ -383,10 +423,7 @@ function searchVideos(){
     
     let results = 0;
     videos.forEach((video, index) => {
-        // Check if title matches
         let titleMatch = video.title.toLowerCase().includes(searchTerm);
-        
-        // Check if any tag matches
         let tagMatch = video.tags.some(tag => tag.toLowerCase().includes(searchTerm));
         
         if(titleMatch || tagMatch){
@@ -403,7 +440,7 @@ function searchVideos(){
     }
 }
 
-// Create a single video card
+// Create video card
 function createVideoCard(video, index){
     let card = document.createElement('div');
     card.className = 'card';
@@ -412,7 +449,6 @@ function createVideoCard(video, index){
     let thumbDiv = document.createElement('div');
     thumbDiv.className = 'thumb';
     
-    // Create video element for thumbnail
     let vid = document.createElement('video');
     vid.muted = true;
     vid.playsInline = true;
@@ -423,7 +459,6 @@ function createVideoCard(video, index){
     source.type = 'video/mp4';
     vid.appendChild(source);
     
-    // Seek to CUSTOM time for THIS video
     vid.onloadedmetadata = function(){
         let seekTime = video.seekTime || 10;
         if(this.duration >= seekTime){
@@ -451,7 +486,7 @@ function createVideoCard(video, index){
     return card;
 }
 
-// Create all thumbnails (for home page)
+// Create all thumbnails
 function createThumbnails(){
     let grid = document.getElementById('videoGrid');
     grid.innerHTML = '';
@@ -475,7 +510,6 @@ function playVideo(index){
     let player = document.getElementById('player');
     player.style.display = 'block';
     
-    // Display tags for this video
     displayTags(currentVideo.tags);
     
     let mainVideo = document.getElementById('mainVideo');
@@ -495,49 +529,32 @@ function handleDownloadClick(e){
     setTimeout(() => window.location.href = currentVideo.download, 100);
 }
 
-// GO HOME FUNCTION - shows all videos and clears search
 function goHome(){
-    // Hide player
     document.getElementById('player').style.display = 'none';
-    
-    // Stop video
     document.getElementById('mainVideo').pause();
     
-    // Remove playing class from current card
     if(currentCardId){
         document.getElementById(currentCardId)?.classList.remove('playing');
     }
     
-    // Clear search input
     document.getElementById('searchInput').value = '';
-    
-    // Show all videos
     createThumbnails();
-    
-    // Scroll to top
     window.scrollTo({top:0, behavior:'smooth'});
-    
-    // Close mobile menu
     closeMenu();
 }
 
-// Handle other menu clicks
 function handleMenuClick(menu){
     alert(menu.charAt(0).toUpperCase() + menu.slice(1) + ' page - add your content here');
 }
 
-// Add enter key support for search
 document.getElementById('searchInput').addEventListener('keypress', function(e){
     if(e.key === 'Enter'){
         searchVideos();
     }
 });
 
-// Initialize on load
 window.onload = function(){
     createThumbnails();
-    
-    // Add click handler to logo if not already in HTML
     document.querySelector('.logo-img').onclick = goHome;
 };
 </script>
