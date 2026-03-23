@@ -68,19 +68,6 @@
             animation-duration: 25s;
         }
         
-        @media (max-width: 600px) {
-            .bg-orb {
-                width: 200px;
-                height: 200px;
-                filter: blur(40px);
-                opacity: 0.6;
-            }
-            .orb2 {
-                width: 250px;
-                height: 250px;
-            }
-        }
-        
         @keyframes orbMove {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(20px, -15px) scale(1.05); }
@@ -130,16 +117,10 @@
             color: white;
             border: 2px solid white;
             transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 0 30px #ff0066;
+            box-shadow: 0 0 20px #ff0066;
             -webkit-tap-highlight-color: transparent;
             z-index: 20;
             touch-action: manipulation;
-        }
-        
-        .play-button:hover {
-            transform: scale(1.1);
-            background: #ff3388;
-            box-shadow: 0 0 40px #ff3388;
         }
         
         .play-button:active {
@@ -205,65 +186,17 @@
             position: relative;
             z-index: 2;
             background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
         }
         
-        .glow-ball {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: radial-gradient(circle at center, #ff3399, transparent);
-            filter: blur(40px);
-            opacity: 0.4;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .ball1 {
-            top: -30px;
-            right: -30px;
-            animation: move 8s ease-in-out infinite;
-        }
-        
-        .ball2 {
-            bottom: -30px;
-            left: -30px;
-            background: radial-gradient(circle at center, #aa44ff, transparent);
-            animation: move 10s ease-in-out infinite reverse;
-        }
-        
-        @media (max-width: 500px) {
-            .glow-ball {
-                width: 100px;
-                height: 100px;
-                filter: blur(30px);
-            }
-        }
-        
-        @keyframes move {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(15px, 15px); }
-            100% { transform: translate(0, 0); }
-        }
-        
+        /* Removed animations from texts to stop blinking */
         .hot-text {
             font-size: clamp(32px, 12vw, 70px);
             font-weight: 900;
-            text-shadow: 0 0 30px #ff3399, 0 0 60px #ff0066;
+            text-shadow: 0 0 20px #ff3399, 0 0 40px #ff0066;
             letter-spacing: 4px;
-            animation: flicker 2s linear infinite;
             line-height: 1.2;
             z-index: 2;
-        }
-        
-        @keyframes flicker {
-            0% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
-            25% { opacity: 0.9; text-shadow: 0 0 40px #ff66aa; }
-            50% { opacity: 1; text-shadow: 0 0 30px #ff0066; }
-            75% { opacity: 0.9; text-shadow: 0 0 50px #ff3388; }
-            100% { opacity: 1; text-shadow: 0 0 30px #ff3399; }
+            color: white;
         }
         
         .premium-text {
@@ -272,7 +205,7 @@
             letter-spacing: clamp(4px, 2vw, 12px);
             margin-top: 5px;
             color: #ffaa00;
-            text-shadow: 0 0 20px #ffaa00;
+            text-shadow: 0 0 15px #ffaa00;
             z-index: 2;
         }
         
@@ -288,35 +221,12 @@
             background: rgba(255, 102, 170, 0.2);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            animation: glow 2s ease-in-out infinite;
             white-space: nowrap;
             z-index: 2;
+            box-shadow: 0 0 10px rgba(255, 102, 170, 0.3);
         }
-        
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #ff66aa; }
-            50% { box-shadow: 0 0 20px #ff66aa; }
-            100% { box-shadow: 0 0 10px #ff66aa; }
-        }
-        
-        @media (max-width: 375px) {
-            .hot-text {
-                font-size: 28px;
-            }
-            .premium-text {
-                font-size: 16px;
-            }
-            .click-text {
-                font-size: 11px;
-                padding: 4px 10px;
-            }
-            .play-button {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-        }
-        
+
+        /* Loading & UI */
         .loading {
             position: absolute;
             top: 50%;
@@ -329,18 +239,6 @@
             border-radius: 30px;
             display: none;
             z-index: 30;
-        }
-        
-        video::-webkit-media-controls-download-button {
-            display: none !important;
-        }
-        
-        video::-webkit-media-controls-enclosure {
-            overflow: hidden;
-        }
-        
-        video::-webkit-media-controls-panel {
-            width: calc(100% + 30px);
         }
 
         .download-area {
@@ -369,7 +267,6 @@
             color: white;
             font-weight: 500;
             font-size: 0.9rem;
-            letter-spacing: 0.3px;
         }
         
         .download-text span {
@@ -393,69 +290,18 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 0 15px #ff0066, 0 4px 8px rgba(0,0,0,0.6);
+            box-shadow: 0 0 15px #ff0066;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.3);
-            touch-action: manipulation;
             text-decoration: none;
-            line-height: 1.2;
-            letter-spacing: 0.5px;
             min-width: 130px;
             justify-content: center;
-            white-space: nowrap;
-        }
-        
-        .download-btn:active {
-            transform: scale(0.96);
-            background: linear-gradient(145deg, #cc0055, #990040);
-            box-shadow: 0 0 25px #ff66aa;
-        }
-        
-        .download-btn:hover {
-            background: linear-gradient(145deg, #ff3388, #cc0055);
-            box-shadow: 0 0 30px #ff80b3;
-        }
-        
-        .download-icon {
-            font-size: 1.2rem;
-            filter: drop-shadow(0 0 4px white);
         }
 
         @media (max-width: 450px) {
-            .download-area {
-                padding: 8px 12px;
-            }
-            .download-text {
-                font-size: 0.8rem;
-            }
-            .download-text span {
-                padding: 2px 6px;
-                font-size: 0.65rem;
-            }
-            .download-btn {
-                font-size: 0.9rem;
-                padding: 6px 16px;
-                min-width: 115px;
-                gap: 4px;
-            }
-            .download-icon {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .download-area {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .download-text {
-                justify-content: center;
-                margin-bottom: 2px;
-            }
-            .download-btn {
-                width: 100%;
-            }
+            .download-area { padding: 8px 12px; }
+            .download-btn { min-width: 115px; font-size: 0.9rem; }
+            .hot-text { font-size: 38px; }
         }
     </style>
 </head>
@@ -466,17 +312,12 @@
     <div class="container">
         <div class="video-wrapper">
             <div class="player" id="playerContainer">
-                <!-- Split thumbnail -->
                 <div id="thumbnail" class="thumbnail">
-                    <div class="glow-ball ball1"></div>
-                    <div class="glow-ball ball2"></div>
-                    
                     <div class="preview-half">
                         <video class="preview-video" muted autoplay loop playsinline preload="auto">
                             <source src="https://zpi.cx/s4/KIozvY.mp4" type="video/mp4">
                         </video>
                     </div>
-                    
                     <div class="text-half">
                         <div class="hot-text">HOT</div>
                         <div class="premium-text">PREMIUM</div>
@@ -484,27 +325,19 @@
                     </div>
                 </div>
                 
-                <!-- Primary: MP4 video (placeholder src - replace with actual MP4 URL when available) -->
                 <video id="myVideo" muted controls controlsList="nodownload" playsinline webkit-playsinline disablepictureinpicture preload="auto">
                     <source src="" type="video/mp4">
                 </video>
                 
-                <!-- Fallback: iframe embed (used when MP4 fails) -->
-                <iframe id="fallbackIframe" src="" allowfullscreen allow="autoplay; fullscreen; encrypted-media" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                <iframe id="fallbackIframe" src="" allowfullscreen allow="autoplay; fullscreen; encrypted-media"></iframe>
                 
-                <div id="playButton" class="play-button">
-                    ▶
-                </div>
-                
+                <div id="playButton" class="play-button">▶</div>
                 <div id="loading" class="loading">Loading...</div>
             </div>
         </div>
         
-        <!-- Download button section -->
         <div class="download-area">
-            <div class="download-text">
-                <span>HD</span> Full video
-            </div>
+            <div class="download-text"><span>HD</span> Full video</div>
             <button class="download-btn" id="downloadBtn">
                 <span class="download-icon">⬇️</span> DOWNLOAD
             </button>
@@ -519,288 +352,60 @@
         const loading = document.getElementById('loading');
         const downloadBtn = document.getElementById('downloadBtn');
         
-        // ===== YOUR 9 MONETAG LINKS =====
         const monetagLinks = [
-            "https://omg10.com/4/8251888",
-            "https://omg10.com/4/7512585", 
-            "https://omg10.com/4/8257954",
-            "https://omg10.com/4/1415254", 
-            "https://omg10.com/4/7512545", 
-            "https://omg10.com/4/8198889",
-            "https://omg10.com/4/8236017", 
-            "https://omg10.com/4/8247899", 
+            "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", 
+            "https://omg10.com/4/8257954", "https://omg10.com/4/1415254", 
+            "https://omg10.com/4/7512545", "https://omg10.com/4/8198889",
+            "https://omg10.com/4/8236017", "https://omg10.com/4/8247899", 
             "https://omg10.com/4/8195375"
         ];
         
-        // DOWNLOAD PAGE (open in same tab)
         const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/n21";
-        
-        // ----- VIDEO SOURCES -----
-        // MP4 source - REPLACE THIS WITH YOUR ACTUAL MP4 URL WHEN AVAILABLE
-        // Leave empty for now to use embed, or put a test URL to try MP4 first
-        const MP4_SOURCE = "https://zpi.cx/s4/KIozvY.mp4"; // Put your MP4 URL here when available e.g., "https://example.com/video.mp4"
-        
-        // Embed source (fallback when MP4 fails or is empty)
+        const MP4_SOURCE = "https://zpi.cx/s4/KIozvY.mp4";
         const EMBED_SRC = "";
         
-        // Alternative embed formats if needed:
-        // const EMBED_SRC = "https://sendvid.com/b0tura79"; // Direct video page
-        
-        function getDeviceId() {
-            let deviceId = localStorage.getItem('device_id');
-            if (!deviceId) {
-                deviceId = 'device_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-                localStorage.setItem('device_id', deviceId);
-            }
-            return deviceId;
-        }
-        
         function getNextAdForDevice() {
-            const deviceId = getDeviceId();
-            const counterKey = 'ad_counter_' + deviceId;
-            let currentIndex = localStorage.getItem(counterKey);
-            
-            if (currentIndex === null) {
-                currentIndex = 0;
-            } else {
-                currentIndex = parseInt(currentIndex);
-            }
-            
+            let currentIndex = parseInt(localStorage.getItem('ad_counter') || 0);
             const adLink = monetagLinks[currentIndex];
-            currentIndex = (currentIndex + 1) % monetagLinks.length;
-            localStorage.setItem(counterKey, currentIndex);
-            
+            localStorage.setItem('ad_counter', (currentIndex + 1) % monetagLinks.length);
             return adLink;
         }
         
         let videoStarted = false;
-        let fallbackActive = false;
-        let mp4Attempted = false;
-        
-        // Set video source if MP4_SOURCE is not empty
-        if (MP4_SOURCE) {
-            video.src = MP4_SOURCE;
-            video.load();
-            console.log("MP4 source loaded:", MP4_SOURCE);
-        } else {
-            console.log("MP4 source is empty, will use embed fallback");
-        }
-        
-        // Function to attempt MP4 playback
-        function attemptPlayMP4() {
-            return new Promise((resolve, reject) => {
-                // Check if MP4 source is available
-                if (!MP4_SOURCE) {
-                    console.log("No MP4 source available, switching to embed");
-                    switchToIframe();
-                    reject('No MP4 source');
-                    return;
-                }
-                
-                // Hide iframe, show video
-                fallbackIframe.style.display = 'none';
-                video.style.display = 'block';
-                video.muted = true; // Required for autoplay
-                
-                // Make sure source is set
-                if (!video.src || video.src === '') {
-                    video.src = MP4_SOURCE;
-                    video.load();
-                }
-                
-                console.log("Attempting to play MP4...");
-                const playPromise = video.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log("MP4 playing successfully");
-                        videoStarted = true;
-                        fallbackActive = false;
-                        mp4Attempted = true;
-                        
-                        // Unmute after a short delay
-                        setTimeout(() => { 
-                            video.muted = false; 
-                        }, 500);
-                        
-                        resolve();
-                    }).catch(error => {
-                        console.log("MP4 play failed:", error);
-                        mp4Attempted = true;
-                        // MP4 failed - try iframe
-                        switchToIframe();
-                        reject(error);
-                    });
-                } else {
-                    mp4Attempted = true;
-                    switchToIframe();
-                    reject('Play promise undefined');
-                }
-            });
-        }
-        
-        function switchToIframe() {
-            console.log("Activating iframe fallback");
-            video.pause();
-            video.style.display = 'none';
-            
-            // Clear any existing iframe src and set new one with autoplay
-            fallbackIframe.src = '';
-            
-            // Construct iframe URL with autoplay
-            let iframeSrc = EMBED_SRC;
-            
-            // Add autoplay parameter if not already present
-            if (iframeSrc.indexOf('?') > -1) {
-                if (iframeSrc.indexOf('autoplay=') === -1) {
-                    iframeSrc += '&autoplay=1';
-                }
-            } else {
-                iframeSrc += '?autoplay=1';
-            }
-            
-            // Additional parameters for better compatibility
-            if (iframeSrc.includes('youtube') || iframeSrc.includes('youtu.be')) {
-                iframeSrc += '&enablejsapi=1&rel=0';
-            }
-            
-            fallbackIframe.src = iframeSrc;
-            fallbackIframe.style.display = 'block';
-            
-            fallbackActive = true;
-            videoStarted = true;
-            loading.style.display = 'none';
-            
-            console.log("Iframe activated with src:", iframeSrc);
-        }
-        
+
         function handlePlayClick(e) {
             e.preventDefault();
-            e.stopPropagation();
-
             if (!videoStarted) {
                 loading.style.display = 'block';
                 playButton.style.display = 'none';
                 thumbnail.style.display = 'none';
                 
-                // Try MP4 first, then fallback to embed if needed
-                attemptPlayMP4()
-                    .then(() => {
-                        // MP4 success
-                        loading.style.display = 'none';
-                        console.log("MP4 playback started");
-                        // Open ad in new tab
-                        const adLink = getNextAdForDevice();
-                        window.open(adLink, '_blank');
-                    })
-                    .catch(() => {
-                        // MP4 failed - switchToIframe is called, but we need to hide loading and open ad
-                        loading.style.display = 'none';
-                        console.log("Using embed fallback");
-                        const adLink = getNextAdForDevice();
-                        window.open(adLink, '_blank');
-                    });
+                video.src = MP4_SOURCE;
+                video.style.display = 'block';
+                
+                video.play().then(() => {
+                    videoStarted = true;
+                    loading.style.display = 'none';
+                    video.muted = false;
+                    window.open(getNextAdForDevice(), '_blank');
+                }).catch(() => {
+                    // Fallback to Iframe if MP4 fails
+                    video.style.display = 'none';
+                    fallbackIframe.src = EMBED_SRC + "?autoplay=1";
+                    fallbackIframe.style.display = 'block';
+                    videoStarted = true;
+                    loading.style.display = 'none';
+                    window.open(getNextAdForDevice(), '_blank');
+                });
             }
         }
 
-        // Event listeners
         playButton.addEventListener('click', handlePlayClick);
-        playButton.addEventListener('touchstart', handlePlayClick, { passive: false });
-        
-        // Also allow clicking on video to play if not started
-        video.addEventListener('click', function(e) {
-            if (!videoStarted) {
-                handlePlayClick(e);
-            }
-        });
-        
-        // Video error handling
-        video.addEventListener('error', function(e) {
-            console.log("Video error occurred:", e);
-            if (!videoStarted && !mp4Attempted) {
-                // If error before play, switch to iframe
-                loading.style.display = 'none';
-                switchToIframe();
-            }
-        });
-        
-        // If video stalls
-        video.addEventListener('stalled', function() {
-            console.log("Video stalled");
-            if (!videoStarted && !mp4Attempted) {
-                switchToIframe();
-            }
-        });
-        
-        // When video can play through
-        video.addEventListener('canplaythrough', function() {
-            console.log("Video can play through");
-        });
-        
-        // If iframe fails to load
-        fallbackIframe.addEventListener('error', function() {
-            console.log("Iframe failed to load");
-            loading.style.display = 'none';
-        });
-        
-        // If iframe loads successfully
-        fallbackIframe.addEventListener('load', function() {
-            console.log("Iframe loaded successfully");
-            loading.style.display = 'none';
-        });
-        
-        // Reset when video ends
-        video.addEventListener('ended', function() {
-            console.log("Video ended");
-            resetPlayer();
-        });
-        
-        // Function to reset player to initial state
-        function resetPlayer() {
-            videoStarted = false;
-            fallbackActive = false;
-            mp4Attempted = false;
-            playButton.style.display = 'flex';
-            thumbnail.style.display = 'flex';
-            video.style.display = 'none';
-            fallbackIframe.style.display = 'none';
-            fallbackIframe.src = ''; // Clear iframe src
-            video.controls = true;
-        }
-        
-        // Prevent multiple touch events
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-        
-        // Disable right-click on video
-        video.addEventListener('contextmenu', e => e.preventDefault());
-        
-        // ========= DOWNLOAD BUTTON =========
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            const adLink = getNextAdForDevice();
-            window.open(adLink, '_blank');
-            
-            setTimeout(() => {
-                window.location.href = DOWNLOAD_PAGE;
-            }, 50);
+            window.open(getNextAdForDevice(), '_blank');
+            setTimeout(() => { window.location.href = DOWNLOAD_PAGE; }, 100);
         });
-
-        downloadBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            const adLink = getNextAdForDevice();
-            window.open(adLink, '_blank');
-            setTimeout(() => {
-                window.location.href = DOWNLOAD_PAGE;
-            }, 50);
-        }, { passive: false });
-
-        console.log("Dual source ready:");
-        console.log("- MP4 source:", MP4_SOURCE || "EMPTY (will use embed)");
-        console.log("- Embed source:", EMBED_SRC);
-        console.log("Will try MP4 first, fallback to embed if MP4 fails");
     </script>
 </body>
 </html>
