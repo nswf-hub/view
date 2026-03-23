@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Watch · Boldilocks Player</title>
+    <title>Watch Video</title>
     <style>
         * {
             margin: 0;
@@ -47,7 +47,6 @@
             position: relative;
         }
 
-        /* Split Screen Style */
         .thumbnail {
             width: 100%;
             height: 100%;
@@ -87,7 +86,6 @@
             color: #ff0066;
         }
 
-        /* Play Button */
         .play-button {
             position: absolute;
             z-index: 30;
@@ -112,6 +110,7 @@
             object-fit: contain;
         }
 
+        /* Fixed Navigation Styles */
         .video-counter {
             text-align: center;
             margin: 15px 0 10px;
@@ -129,14 +128,22 @@
             background: #222;
             border: 1px solid #444;
             color: #eee;
-            padding: 12px 0;
+            padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
             flex: 1;
             max-width: 140px;
+            transition: background 0.2s;
         }
 
-        .nav-button:disabled { opacity: 0.2; }
+        .nav-button:hover:not(:disabled) {
+            background: #333;
+        }
+
+        .nav-button:disabled { 
+            opacity: 0.2; 
+            cursor: not-allowed;
+        }
 
         .loading {
             position: absolute;
@@ -173,21 +180,21 @@
             </div>
         </div>
 
-     
-
-       
+        <div id="videoCounter" class="video-counter">Video 1 of 1</div>
+        <div class="nav-buttons">
+            <button id="prevButton" class="nav-button" disabled>Previous</button>
+            <button id="nextButton" class="nav-button" disabled>Next</button>
+        </div>
     </div>
 
     <script>
         (function() {
+            // Add your video URLs here
             const videoSources = [
-                "https://zpi.cx/s4/rHebXMU.mp4",
-            
-              
-                
-                
+                "https://zpi.cx/s4/rHebXMU.mp4"
             ];
 
+            // Add your ad links here
             const monetagLinks = [
                 "https://omg10.com/4/8251888",
                 "https://omg10.com/4/7512585", 
@@ -204,10 +211,10 @@
             const loading = document.getElementById('loading');
 
             let currentIdx = 0;
-            let isFirstLoad = true; // Flag to track the very first video
+            let isFirstLoad = true; 
 
             function updateUI() {
-                // Update counter and nav state
+                // Update counter and button states
                 counter.textContent = `Video ${currentIdx + 1} of ${videoSources.length}`;
                 prevBtn.disabled = (currentIdx === 0);
                 nextBtn.disabled = (currentIdx === videoSources.length - 1);
@@ -217,24 +224,21 @@
                 video.load();
 
                 if (isFirstLoad && currentIdx === 0) {
-                    // SHOW split screen only for the very first video on load
                     thumbnail.style.display = 'flex';
                     video.style.display = 'none';
                 } else {
-                    // HIDE split screen for all subsequent "Next/Prev" clicks
                     thumbnail.style.display = 'none';
                     video.style.display = 'block';
                 }
 
-                // Always show play button when switching videos to force ad click
                 playBtn.style.display = 'flex';
                 video.pause();
             }
 
             function handlePlayAction() {
-                isFirstLoad = false; // Once clicked, it's no longer the first load state
+                isFirstLoad = false;
                 
-                // Open Ad
+                // Open Ad in new tab
                 window.open(monetagLinks[currentIdx % monetagLinks.length], '_blank');
 
                 loading.style.display = 'block';
@@ -242,7 +246,9 @@
                 playBtn.style.display = 'none';
                 video.style.display = 'block';
 
-                video.play().finally(() => {
+                video.play().catch(err => {
+                    console.log("Playback failed:", err);
+                }).finally(() => {
                     loading.style.display = 'none';
                 });
             }
@@ -251,7 +257,7 @@
             
             nextBtn.addEventListener('click', () => {
                 if(currentIdx < videoSources.length - 1) {
-                    isFirstLoad = false; // Ensure split screen goes away
+                    isFirstLoad = false;
                     currentIdx++;
                     updateUI();
                 }
@@ -269,6 +275,7 @@
                 playBtn.style.display = 'flex';
             });
 
+            // Initialize the player
             updateUI();
         })();
     </script>
