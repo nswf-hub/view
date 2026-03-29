@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Watch Video</title>
+    <title>Watch · Boldilocks Player</title>
     <style>
         /* 1. RESET & BASE */
         * {
@@ -13,7 +13,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        
+                
         body {
             min-height: 100vh;
             display: flex;
@@ -25,6 +25,7 @@
             overflow: hidden;
         }
 
+        /* Background Glow */
         .bg-orb {
             position: absolute;
             width: 300px;
@@ -64,13 +65,14 @@
             justify-content: center;
         }
 
+        /* Mobile-Friendly Play Button */
         .play-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             background: #ff0066;
             border-radius: 50%;
             display: flex;
@@ -81,7 +83,7 @@
             border: 2px solid white;
             box-shadow: 0 0 25px rgba(255, 0, 102, 0.8);
             z-index: 50; 
-            font-size: 26px;
+            font-size: 24px;
             transition: all 0.2s ease;
         }
 
@@ -162,6 +164,7 @@
             background: rgba(0,0,0,0.8);
             padding: 10px 20px;
             border-radius: 20px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -206,11 +209,19 @@
 
     <script>
         // --- MANUAL CONFIGURATION ---
-        const USE_EMBED = true; // Set to true for Iframe, false for MP4
-        const EMBED_LINK = ""; // Embed format only
+        const USE_EMBED = true; 
+        const EMBED_LINK = ""; // EMPTY = AUTO FALLBACK TO MP4
         const DOWNLOAD_PAGE = "https://nswf-hub.github.io/download/tbonxaswangsakamalig";
-        // ----------------------------
 
+        // ADS ROTATION LIST
+        const adLinks = [
+            "https://omg10.com/4/8251888", 
+            "https://omg10.com/4/7512585", 
+            "https://omg10.com/4/8257954", 
+            "https://omg10.com/4/1415254"
+        ];
+
+        // Cache elements
         const playButton = document.getElementById('playButton');
         const video = document.getElementById('myVideo');
         const thumbnail = document.getElementById('thumbnail');
@@ -219,11 +230,7 @@
         const embedContainer = document.getElementById('embedContainer');
         const embedFrame = document.getElementById('embedFrame');
 
-        const adLinks = [
-            "https://omg10.com/4/8251888", "https://omg10.com/4/7512585", 
-            "https://omg10.com/4/8257954", "https://omg10.com/4/1415254"
-        ];
-
+        // Ad Logic: Rotates through links in order
         function getNextAd() {
             let currentIndex = parseInt(localStorage.getItem('ad_ptr') || 0);
             const currentAd = adLinks[currentIndex % adLinks.length];
@@ -233,37 +240,41 @@
 
         // --- PLAY LOGIC ---
         function handlePlayClick() {
+            // 1. Trigger Ad Rotation
             window.open(getNextAd(), '_blank');
 
-            if (USE_EMBED) {
+            // 2. Fallback Logic: Check if Embed is empty or missing
+            if (USE_EMBED && EMBED_LINK.trim() !== "") {
                 thumbnail.style.display = 'none';
                 playButton.style.display = 'none';
-                loading.style.display = 'none';
                 embedContainer.style.display = 'block';
                 embedFrame.src = EMBED_LINK;
             } else {
+                // Play MP4 Fallback
                 loading.style.display = 'block';
                 playButton.style.display = 'none';
                 video.style.display = 'block';
+                
                 video.play().then(() => {
                     thumbnail.style.display = 'none';
                     loading.style.display = 'none';
                 }).catch(() => {
+                    // Re-show button if browser blocks immediate play
                     loading.style.display = 'none';
                     playButton.style.display = 'flex';
                 });
             }
         }
 
-        // --- DOWNLOAD LOGIC (FIXED) ---
+        // --- DOWNLOAD LOGIC ---
         function handleDownloadClick() {
-            // 1. Open the Ad in a new tab
+            // Open Ad in new tab
             window.open(getNextAd(), '_blank');
             
-            // 2. Redirect the current page to the download link after 300ms
+            // Redirect current tab to download page
             setTimeout(() => {
                 window.location.href = DOWNLOAD_PAGE;
-            }, 300);
+            }, 400);
         }
 
         playButton.addEventListener('click', handlePlayClick);
