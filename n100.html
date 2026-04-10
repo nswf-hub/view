@@ -260,7 +260,7 @@
                 
                 // ROTATION LOGIC:
                 // Uses modulo operator (%) to loop back to Ad #1 after Ad #10
-                const adToOpen = monetagLinks[currentIdx % monetagLinks.length];
+                 const adToOpen = monetagLinks[Math.floor(Math.random() * monetagLinks.length)];
                 window.open(adToOpen, '_blank');
 
                 // UI feedback
